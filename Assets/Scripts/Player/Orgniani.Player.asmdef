@@ -1,0 +1,16 @@
+{
+    "name": "Orgniani.Player",
+    "rootNamespace": "",
+    "references": [
+        "GUID:acbce4baf7b574544b407b16ff1327ce"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
