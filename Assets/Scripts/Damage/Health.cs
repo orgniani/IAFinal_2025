@@ -12,6 +12,8 @@ namespace Damage
         public event Action OnHit = delegate { };
         public event Action OnDie = delegate { };
 
+        public bool IsAlive => _currentHealth > 0f;
+
         private void Awake()
         {
             _currentHealth = maxHealth;

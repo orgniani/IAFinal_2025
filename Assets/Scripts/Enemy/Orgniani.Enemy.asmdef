@@ -1,0 +1,16 @@
+{
+    "name": "Orgniani.Enemy",
+    "rootNamespace": "",
+    "references": [
+        "GUID:af07de07a6098504880baa8dc0dba3ab"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
