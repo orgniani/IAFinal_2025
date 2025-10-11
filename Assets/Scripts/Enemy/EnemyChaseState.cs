@@ -1,61 +1,72 @@
-using System;
 using UnityEngine;
 using UnityEngine.AI;
+using Damage;
 using Player;
 
-namespace Class3
+namespace Enemy
 {
     public class EnemyChaseState : StateMachineBehaviour
     {
         [Header("Settings")]
         [SerializeField, Range(0f, 20f)] private float chaseSpeed = 5f;
-        [SerializeField, Range(0f, 20f)] private float loseTrackRange = 5f;
-        [SerializeField, Range(0f, 1f)] private float pathfindingIntervals = 0.5f;
+        [SerializeField, Range(0f, 30f)] private float loseRange = 15f;
+        [SerializeField, Range(0f, 2f)] private float updateInterval = 0.3f;
+        [SerializeField, Range(0f, 5f)] private float attackRange = 2f;
 
-        [Header("Animation parameters")]
-        [SerializeField] private string playerOutOfRangeTrigger = "PlayerOutOfRange";
+        [Header("Animator Parameters")]
+        [SerializeField] private string playerLostTrigger = "PlayerOutOfRange";
+        [SerializeField] private string playerInAttackRangeTrigger = "PlayerInAttackRange";
+        [SerializeField] private string playerDiedTrigger = "PlayerDied";
 
-        private NavMeshAgent agent;
-        private Transform attackTarget;
-        private float pathfindingTimer;
+        private NavMeshAgent _agent;
 
+        private Transform _target;
+        private IDamageable _damageableTarget;
 
-        private bool IsOutOfRange()
+        private float _timer;
+
+        private bool IsOutOfRange() =>
+            (_target.position - _agent.transform.position).sqrMagnitude > loseRange * loseRange;
+
+        private bool IsInAttackRange() =>
+            (_target.position - _agent.transform.position).sqrMagnitude <= attackRange * attackRange;
+
+        public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            float sqrDistanceToTarget = (attackTarget.position - agent.transform.position).sqrMagnitude;
+            _agent = animator.GetComponent<NavMeshAgent>();
+            var player = FindAnyObjectByType<PlayerController>();
 
-            return sqrDistanceToTarget >= loseTrackRange * loseTrackRange;
-        }
-
-        public override void OnStateEnter (Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            if (!agent)
-                agent = animator.GetComponent<NavMeshAgent>();
-
-            if (!attackTarget)
-                attackTarget = FindAnyObjectByType<PlayerController>().transform;
-
-            agent.speed = chaseSpeed;
-            agent.destination = attackTarget.position;
-        }
-
-        public override void OnStateUpdate (Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            pathfindingTimer += Time.deltaTime;
-
-            if (pathfindingTimer >= pathfindingIntervals)
+            if (player)
             {
-                agent.destination = attackTarget.position;
-                pathfindingTimer -= pathfindingIntervals;
+                _target = player.transform;
+                _damageableTarget = player.GetComponent<IDamageable>();
+            }
+
+            _agent.speed = chaseSpeed;
+        }
+
+        public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            if (_target == null || _damageableTarget == null)
+                return;
+
+            if (!_damageableTarget.IsAlive)
+            {
+                animator.SetTrigger(playerDiedTrigger);
+                return;
+            }
+
+            _timer += Time.deltaTime;
+            if (_timer >= updateInterval)
+            {
+                _agent.SetDestination(_target.position);
+                _timer = 0f;
             }
 
             if (IsOutOfRange())
-                animator.SetTrigger(playerOutOfRangeTrigger);
-        }
-
-        public override void OnStateExit (Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
-        {
-            pathfindingTimer = 0f;
+                animator.SetTrigger(playerLostTrigger);
+            else if (IsInAttackRange())
+                animator.SetTrigger(playerInAttackRangeTrigger);
         }
     }
 }

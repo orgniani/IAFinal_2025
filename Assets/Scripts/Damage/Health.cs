@@ -34,6 +34,8 @@ namespace Damage
         {
             OnDie?.Invoke();
 
+            Debug.Log($"{gameObject.name} died.");
+
             //TODO: delete later, just for testing
             if (shouldDespawn) 
                 gameObject.SetActive(false);
