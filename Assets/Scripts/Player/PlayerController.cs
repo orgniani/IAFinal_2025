@@ -5,6 +5,7 @@ using System;
 namespace Player
 {
     [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(Health))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement Settings")]

@@ -5,24 +5,28 @@ using Player;
 
 namespace Enemy
 {
-    public class EnemyChaseState : StateMachineBehaviour
+    public class EnemyEscapeState : StateMachineBehaviour
     {
-        [Header("Settings")]
-        [SerializeField] private EnemyGeneralSettings generalSettings;
-        [SerializeField] private RangedEnemySettings rangedSettings;
-        [SerializeField] private bool isRanged;
-
         [Header("Parameters")]
         [SerializeField] private EnemyAnimationParameters animationParameters;
+        [SerializeField] private RangedEnemySettings settings;
 
         private NavMeshAgent _agent;
         private Transform _target;
         private IDamageable _damageableTarget;
         private float _timer;
 
-        private float EscapeDistance => isRanged ? rangedSettings.escapeDistance : 0f;
-        private float AttackRange => isRanged ? rangedSettings.attackRange : generalSettings.attackRange;
-        private float LoseRange => isRanged ? rangedSettings.loseTargetDistance : generalSettings.loseTargetDistance;
+        private bool IsFarEnough()
+        {
+            float dist = Vector3.Distance(_agent.transform.position, _target.position);
+            return dist >= settings.attackRange;
+        }
+
+        private bool IsOutOfRange()
+        {
+            float dist = Vector3.Distance(_agent.transform.position, _target.position);
+            return dist > settings.loseTargetDistance;
+        }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
@@ -34,7 +38,8 @@ namespace Enemy
                 _damageableTarget = player.GetComponent<IDamageable>();
             }
 
-            _agent.speed = isRanged ? rangedSettings.chaseSpeed : generalSettings.chaseSpeed;
+            _agent.isStopped = false;
+            _agent.speed = settings.escapeSpeed;
             _timer = 0f;
         }
 
@@ -50,20 +55,24 @@ namespace Enemy
             }
 
             _timer += Time.deltaTime;
-            if (_timer >= generalSettings.updateInterval)
+            if (_timer >= 0.3f)
             {
-                _agent.SetDestination(_target.position);
                 _timer = 0f;
+                Vector3 dirAway = (_agent.transform.position - _target.position).normalized;
+                Vector3 destination = _agent.transform.position + dirAway * settings.attackRange;
+                _agent.SetDestination(destination);
             }
 
-            float distance = Vector3.Distance(_agent.transform.position, _target.position);
-
-            if (distance < EscapeDistance && isRanged)
-                animator.SetTrigger(animationParameters.playerTooCloseTrigger);
-            else if (distance <= AttackRange)
-                animator.SetTrigger(animationParameters.playerInRangeTrigger);
-            else if (distance > LoseRange)
+            //TODO: not out of range, it should check if outside ATTACK DISTANCE, no LOST DISTANce!!! change this up!
+            if (IsOutOfRange())
                 animator.SetTrigger(animationParameters.playerLostTrigger);
+            else if (IsFarEnough())
+                animator.SetTrigger(animationParameters.playerInRangeTrigger);
+        }
+
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            _agent.ResetPath();
         }
     }
 }

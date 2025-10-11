@@ -7,14 +7,14 @@ namespace Enemy
 {
     public class EnemyWanderState : StateMachineBehaviour
     {
+        [Header("Parameters")]
+        [SerializeField] private EnemyAnimationParameters animationParameters;
+
         [Header("Settings")]
         [SerializeField, Range(0f, 20f)] private float wanderSpeed = 3f;
         [SerializeField, Range(0f, 30f)] private float searchRadius = 10f;
         [SerializeField, Range(0f, 20f)] private float circleRadius = 3f;
         [SerializeField, Range(4, 64)] private int circlePrecision = 16;
-
-        [Header("Animator Parameters")]
-        [SerializeField] private string playerDetectedTrigger = "PlayerDetected";
 
         private NavMeshAgent _agent;
 
@@ -63,7 +63,7 @@ namespace Enemy
                 _agent.SetDestination(GetNextDestination());
 
             if (_damageableTarget != null && _damageableTarget.IsAlive && IsPlayerInRange())
-                animator.SetTrigger(playerDetectedTrigger);
+                animator.SetTrigger(animationParameters.playerDetectedTrigger);
         }
     }
 }

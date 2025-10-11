@@ -5,35 +5,27 @@ using Player;
 
 namespace Enemy
 {
-    public class EnemyAttackState : StateMachineBehaviour
+    public abstract class EnemyAttackStateBase : StateMachineBehaviour
     {
-        [Header("Settings")]
-        [SerializeField, Range(0f, 5f)] private float attackCooldown = 1f;
-        [SerializeField, Range(0f, 5f)] private float attackRange = 2f;
-        [SerializeField] private float attackDamage = 10f;
+        [Header("Parameters")]
+        [SerializeField] protected EnemyAnimationParameters animationParameters;
 
-        [Header("Animator Parameters")]
-        [SerializeField] private string playerOutOfRangeTrigger = "PlayerOutOfRange";
-        [SerializeField] private string playerDiedTrigger = "PlayerDied";
+        [Header("Shared Settings")]
+        [SerializeField, Range(0f, 5f)] protected float attackCooldown = 1f;
+        [SerializeField, Range(0f, 20f)] protected float attackRange = 5f;
 
-        private NavMeshAgent _agent;
+        protected NavMeshAgent _agent;
+        protected Transform _target;
+        protected IDamageable _damageableTarget;
+        protected float _cooldownTimer;
 
-        private Transform _target;
-        private IDamageable _damageableTarget;
-
-        private float _cooldownTimer;
-
-        private bool IsOutOfRange()
-        {
-            float sqrDistance = (_target.position - _agent.transform.position).sqrMagnitude;
-            return sqrDistance > attackRange * attackRange;
-        }
+        protected abstract void PerformAttack();
+        protected abstract bool IsOutOfRange();
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             _agent = animator.GetComponent<NavMeshAgent>();
             var player = FindAnyObjectByType<PlayerController>();
-
             if (player)
             {
                 _target = player.transform;
@@ -51,7 +43,7 @@ namespace Enemy
 
             if (!_damageableTarget.IsAlive)
             {
-                animator.SetTrigger(playerDiedTrigger);
+                animator.SetTrigger(animationParameters.playerDiedTrigger);
                 return;
             }
 
@@ -61,7 +53,7 @@ namespace Enemy
 
             if (IsOutOfRange())
             {
-                animator.SetTrigger(playerOutOfRangeTrigger);
+                animator.SetTrigger(animationParameters.playerOutRangeTrigger);
                 return;
             }
 
@@ -69,7 +61,7 @@ namespace Enemy
             if (_cooldownTimer <= 0f)
             {
                 _cooldownTimer = attackCooldown;
-                _damageableTarget.ApplyDamage(attackDamage);
+                PerformAttack();
             }
         }
 
