@@ -14,7 +14,7 @@ namespace Enemy
         protected override bool IsOutOfRange()
         {
             float sqrDist = (_target.position - _agent.transform.position).sqrMagnitude;
-            return sqrDist > attackRange * attackRange;
+            return sqrDist > settings.attackRange * settings.attackRange;
         }
     }
 }

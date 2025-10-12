@@ -9,23 +9,20 @@ namespace Enemy
     {
         [Header("Parameters")]
         [SerializeField] private EnemyAnimationParameters animationParameters;
-        [SerializeField] private RangedEnemySettings settings;
+
+        [Header("Settings")]
+        [SerializeField] private EnemyGeneralSettings settings;
+        [SerializeField, Range(0f, 10f)] private float escapeSpeed = 6f;
 
         private NavMeshAgent _agent;
         private Transform _target;
         private IDamageable _damageableTarget;
         private float _timer;
 
-        private bool IsFarEnough()
+        private bool IsOutOfAttackRange()
         {
             float dist = Vector3.Distance(_agent.transform.position, _target.position);
-            return dist >= settings.attackRange;
-        }
-
-        private bool IsOutOfRange()
-        {
-            float dist = Vector3.Distance(_agent.transform.position, _target.position);
-            return dist > settings.loseTargetDistance;
+            return dist > settings.attackRange;
         }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -39,7 +36,7 @@ namespace Enemy
             }
 
             _agent.isStopped = false;
-            _agent.speed = settings.escapeSpeed;
+            _agent.speed = escapeSpeed;
             _timer = 0f;
         }
 
@@ -63,10 +60,9 @@ namespace Enemy
                 _agent.SetDestination(destination);
             }
 
-            //TODO: not out of range, it should check if outside ATTACK DISTANCE, no LOST DISTANce!!! change this up!
-            if (IsOutOfRange())
-                animator.SetTrigger(animationParameters.playerLostTrigger);
-            else if (IsFarEnough())
+            if (IsOutOfAttackRange())
+                animator.SetTrigger(animationParameters.playerOutRangeTrigger);
+            else
                 animator.SetTrigger(animationParameters.playerInRangeTrigger);
         }
 

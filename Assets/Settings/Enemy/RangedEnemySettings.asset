@@ -9,11 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8a62b13adfed174b8166656f46fdcd3, type: 3}
+  m_Script: {fileID: 11500000, guid: 27d137cad42d2b840a1f086bdeca9dc2, type: 3}
   m_Name: RangedEnemySettings
   m_EditorClassIdentifier: 
-  minAttackDistance: 5
-  optimalAttackDistance: 7
-  loseTargetDistance: 15
-  chaseSpeed: 3
-  escapeSpeed: 6
+  updateInterval: 0.3
+  attackRange: 10

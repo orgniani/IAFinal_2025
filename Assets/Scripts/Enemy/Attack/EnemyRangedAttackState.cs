@@ -9,8 +9,7 @@ namespace Enemy
     public class EnemyRangedAttackState : EnemyAttackStateBase
     {
         [Header("Ranged Attack Settings")]
-        [SerializeField] private EnemyGeneralSettings generalSettings;
-        [SerializeField] private RangedEnemySettings settings;
+        [SerializeField, Range(0f, 20f)] private float escapeRange = 3f;
         [SerializeField] private GameObject bulletPrefab;
 
         [Header("Pooling Settings")]
@@ -18,21 +17,22 @@ namespace Enemy
         [SerializeField] private int maxPoolSize = 30;
 
         private List<GameObject> _bulletPool;
+        private float _updateTimer;
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
             if (_bulletPool == null)
                 InitializePool(minPoolSize);
+
+            _agent.isStopped = false;
+            _updateTimer = 0f;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
-            base.OnStateUpdate(animator, stateInfo, layerIndex);
-            if (_target == null)
+            if (_target == null || _damageableTarget == null)
                 return;
-
-            float distance = Vector3.Distance(_agent.transform.position, _target.position);
 
             if (!_damageableTarget.IsAlive)
             {
@@ -40,29 +40,44 @@ namespace Enemy
                 return;
             }
 
-            if (distance < settings.escapeDistance)
+            float distance = Vector3.Distance(_agent.transform.position, _target.position);
+            _updateTimer += Time.deltaTime;
+
+            if (_updateTimer >= settings.updateInterval)
             {
-                animator.SetTrigger(animationParameters.playerTooCloseTrigger);
-                return;
+                _updateTimer = 0f;
+                Vector3 dirFromPlayer = (_agent.transform.position - _target.position).normalized;
+
+                if (distance < escapeRange)
+                {
+                    animator.SetTrigger(animationParameters.playerTooCloseTrigger);
+                    return;
+                }
+
+                else if (distance > settings.attackRange)
+                {
+                    _agent.SetDestination(_target.position);
+                }
+                else
+                {
+                    _agent.ResetPath();
+                }
             }
 
-            if (distance > settings.loseTargetDistance)
-            {
-                animator.SetTrigger(animationParameters.playerLostTrigger);
-                return;
-            }
-
-            if (distance > settings.attackRange && distance <= settings.loseTargetDistance)
+            if (distance > settings.attackRange)
             {
                 animator.SetTrigger(animationParameters.playerOutRangeTrigger);
                 return;
             }
 
-            _cooldownTimer -= Time.deltaTime;
-            if (_cooldownTimer <= 0f)
+            if (distance <= settings.attackRange && distance >= escapeRange)
             {
-                _cooldownTimer = attackCooldown;
-                PerformAttack();
+                _cooldownTimer -= Time.deltaTime;
+                if (_cooldownTimer <= 0f)
+                {
+                    _cooldownTimer = attackCooldown;
+                    PerformAttack();
+                }
             }
         }
 

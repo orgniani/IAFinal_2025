@@ -11,8 +11,8 @@ namespace Enemy
         [SerializeField] protected EnemyAnimationParameters animationParameters;
 
         [Header("Shared Settings")]
+        [SerializeField] protected EnemyGeneralSettings settings;
         [SerializeField, Range(0f, 5f)] protected float attackCooldown = 1f;
-        [SerializeField, Range(0f, 20f)] protected float attackRange = 5f;
 
         protected NavMeshAgent _agent;
         protected Transform _target;

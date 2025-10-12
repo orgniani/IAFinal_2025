@@ -8,9 +8,9 @@ namespace Enemy
     public class EnemyChaseState : StateMachineBehaviour
     {
         [Header("Settings")]
-        [SerializeField] private EnemyGeneralSettings generalSettings;
-        [SerializeField] private RangedEnemySettings rangedSettings;
-        [SerializeField] private bool isRanged;
+        [SerializeField] private EnemyGeneralSettings settings;
+        [SerializeField, Range(0f, 20f)] private float chaseSpeed = 5f;
+        [SerializeField, Range(0f, 30f)] private float loseRange = 15f;
 
         [Header("Parameters")]
         [SerializeField] private EnemyAnimationParameters animationParameters;
@@ -19,10 +19,6 @@ namespace Enemy
         private Transform _target;
         private IDamageable _damageableTarget;
         private float _timer;
-
-        private float EscapeDistance => isRanged ? rangedSettings.escapeDistance : 0f;
-        private float AttackRange => isRanged ? rangedSettings.attackRange : generalSettings.attackRange;
-        private float LoseRange => isRanged ? rangedSettings.loseTargetDistance : generalSettings.loseTargetDistance;
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
@@ -34,7 +30,7 @@ namespace Enemy
                 _damageableTarget = player.GetComponent<IDamageable>();
             }
 
-            _agent.speed = isRanged ? rangedSettings.chaseSpeed : generalSettings.chaseSpeed;
+            _agent.speed = chaseSpeed;
             _timer = 0f;
         }
 
@@ -50,7 +46,7 @@ namespace Enemy
             }
 
             _timer += Time.deltaTime;
-            if (_timer >= generalSettings.updateInterval)
+            if (_timer >= settings.updateInterval)
             {
                 _agent.SetDestination(_target.position);
                 _timer = 0f;
@@ -58,11 +54,10 @@ namespace Enemy
 
             float distance = Vector3.Distance(_agent.transform.position, _target.position);
 
-            if (distance < EscapeDistance && isRanged)
-                animator.SetTrigger(animationParameters.playerTooCloseTrigger);
-            else if (distance <= AttackRange)
+            if (distance <= settings.attackRange)
                 animator.SetTrigger(animationParameters.playerInRangeTrigger);
-            else if (distance > LoseRange)
+
+            else if (distance > loseRange)
                 animator.SetTrigger(animationParameters.playerLostTrigger);
         }
     }
