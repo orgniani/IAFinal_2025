@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Player;
 using Damage;
+using Helpers;
 
 namespace Enemy
 {
@@ -11,6 +12,7 @@ namespace Enemy
         [SerializeField] private EnemyAnimationParameters animationParameters;
 
         [Header("Settings")]
+        [SerializeField] private EnemyGeneralSettings settings;
         [SerializeField, Range(0f, 20f)] private float wanderSpeed = 3f;
         [SerializeField, Range(0f, 30f)] private float searchRadius = 10f;
         [SerializeField, Range(0f, 20f)] private float circleRadius = 3f;
@@ -37,12 +39,13 @@ namespace Enemy
             if (_target == null)
                 return false;
 
-            float sqrDistance = (_target.position - _agent.transform.position).sqrMagnitude;
-            return sqrDistance <= searchRadius * searchRadius;
+            return DistanceHelper.IsWithinRange(_agent.transform.position, _target.position, searchRadius);
         }
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            ValidateReferences();
+
             _agent = animator.GetComponent<NavMeshAgent>();
 
             var player = FindAnyObjectByType<PlayerController>();
@@ -64,6 +67,12 @@ namespace Enemy
 
             if (_damageableTarget != null && _damageableTarget.IsAlive && IsPlayerInRange())
                 animator.SetTrigger(animationParameters.playerDetectedTrigger);
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(animationParameters, nameof(animationParameters), this);
+            ReferenceValidator.Validate(settings, nameof(settings), this);
         }
     }
 }

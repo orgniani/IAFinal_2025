@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27d137cad42d2b840a1f086bdeca9dc2, type: 3}
   m_Name: MeleeEnemySettings
   m_EditorClassIdentifier: 
-  chaseSpeed: 5
-  loseTargetDistance: 10
   updateInterval: 0.3
+  attackRange: 2
+  hysteresis: 0.5

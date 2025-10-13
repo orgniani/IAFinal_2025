@@ -11,10 +11,5 @@ namespace Enemy
             _damageableTarget?.ApplyDamage(attackDamage);
         }
 
-        protected override bool IsOutOfRange()
-        {
-            float sqrDist = (_target.position - _agent.transform.position).sqrMagnitude;
-            return sqrDist > settings.attackRange * settings.attackRange;
-        }
     }
 }

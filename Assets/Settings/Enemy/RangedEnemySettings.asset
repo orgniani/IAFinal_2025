@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 27d137cad42d2b840a1f086bdeca9dc2, type: 3}
   m_Name: RangedEnemySettings
   m_EditorClassIdentifier: 
-  updateInterval: 0.3
-  attackRange: 10
+  UpdateInterval: 0.3
+  AttackRange: 10
+  hysteresis: 0.5

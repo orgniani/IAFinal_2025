@@ -56,7 +56,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: PlayerOutOfRange
+    m_ConditionEvent: PlayerLost
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: -350604465677189411}
@@ -140,7 +140,7 @@ AnimatorController:
     m_DefaultInt: 0
     m_DefaultBool: 0
     m_Controller: {fileID: 9100000}
-  - m_Name: PlayerOutOfRange
+  - m_Name: PlayerLost
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -199,13 +199,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 316f950161116784fa39f207fb870753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings: {fileID: 11400000, guid: bb53df5d6bbaf4c47a32f0c1ff5853c3, type: 2}
   chaseSpeed: 3
   loseRange: 10
-  updateInterval: 0.3
-  attackRange: 2
-  playerLostTrigger: PlayerOutOfRange
-  playerInAttackRangeTrigger: PlayerInAttackRange
-  playerDiedTrigger: PlayerDied
+  animationParameters: {fileID: 11400000, guid: 538d865579b392741a3bcf1b81eb1e15, type: 2}
 --- !u!114 &6525671962729865500
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,11 +215,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b747072f25056f4a8560812d46106a6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  animationParameters: {fileID: 11400000, guid: 538d865579b392741a3bcf1b81eb1e15, type: 2}
+  settings: {fileID: 11400000, guid: bb53df5d6bbaf4c47a32f0c1ff5853c3, type: 2}
   wanderSpeed: 1
   searchRadius: 5
   circleRadius: 3
   circlePrecision: 16
-  playerDetectedTrigger: PlayerDetected
 --- !u!114 &7721413197304666262
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -235,10 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 316f950161116784fa39f207fb870753, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  settings: {fileID: 0}
   chaseSpeed: 3
   loseRange: 15
-  updateInterval: 0.3
-  attackRange: 2
-  playerLostTrigger: PlayerOutOfRange
-  playerInAttackRangeTrigger: PlayerInAttackRange
-  playerDiedTrigger: PlayerDied
+  animationParameters: {fileID: 0}

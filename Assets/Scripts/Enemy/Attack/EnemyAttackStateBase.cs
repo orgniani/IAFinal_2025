@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Damage;
 using Player;
+using Helpers;
 
 namespace Enemy
 {
@@ -20,10 +21,17 @@ namespace Enemy
         protected float _cooldownTimer;
 
         protected abstract void PerformAttack();
-        protected abstract bool IsOutOfRange();
+
+        private bool IsOutOfAttackRange()
+        {
+            return DistanceHelper.IsBeyondRange(_agent.transform.position, _target.position, settings.AttackRange);
+        }
+
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            ValidateReferences();
+
             _agent = animator.GetComponent<NavMeshAgent>();
             var player = FindAnyObjectByType<PlayerController>();
             if (player)
@@ -51,7 +59,7 @@ namespace Enemy
             lookPos.y = 0f;
             _agent.transform.rotation = Quaternion.LookRotation(lookPos);
 
-            if (IsOutOfRange())
+            if (IsOutOfAttackRange())
             {
                 animator.SetTrigger(animationParameters.playerOutRangeTrigger);
                 return;
@@ -68,6 +76,12 @@ namespace Enemy
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             _agent.isStopped = false;
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(animationParameters, nameof(animationParameters), this);
+            ReferenceValidator.Validate(settings, nameof(settings), this);
         }
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Damage;
 using Player;
+using Helpers;
 
 namespace Enemy
 {
@@ -20,8 +21,20 @@ namespace Enemy
         private IDamageable _damageableTarget;
         private float _timer;
 
+        private bool IsOutOfRange()
+        {
+            return DistanceHelper.IsBeyondRange(_agent.transform.position, _target.position, loseRange);
+        }
+
+        private bool IsInAttackRange()
+        {
+            return DistanceHelper.IsWithinRange(_agent.transform.position, _target.position, settings.AttackRange);
+        }
+
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            ValidateReferences();
+
             _agent = animator.GetComponent<NavMeshAgent>();
             var player = FindAnyObjectByType<PlayerController>();
             if (player)
@@ -46,19 +59,22 @@ namespace Enemy
             }
 
             _timer += Time.deltaTime;
-            if (_timer >= settings.updateInterval)
+            if (_timer >= settings.UpdateInterval)
             {
                 _agent.SetDestination(_target.position);
                 _timer = 0f;
             }
 
-            float distance = Vector3.Distance(_agent.transform.position, _target.position);
-
-            if (distance <= settings.attackRange)
+            if (IsInAttackRange())
                 animator.SetTrigger(animationParameters.playerInRangeTrigger);
-
-            else if (distance > loseRange)
+            else if (IsOutOfRange())
                 animator.SetTrigger(animationParameters.playerLostTrigger);
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(animationParameters, nameof(animationParameters), this);
+            ReferenceValidator.Validate(settings, nameof(settings), this);
         }
     }
 }

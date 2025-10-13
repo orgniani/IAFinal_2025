@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Damage;
 using Player;
+using Helpers;
 
 namespace Enemy
 {
@@ -17,16 +18,16 @@ namespace Enemy
         [SerializeField] private int maxPoolSize = 30;
 
         private List<GameObject> _bulletPool;
-        private float _updateTimer;
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
+            ReferenceValidator.Validate(bulletPrefab, nameof(bulletPrefab), this);
+
             if (_bulletPool == null)
                 InitializePool(minPoolSize);
 
             _agent.isStopped = false;
-            _updateTimer = 0f;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -40,46 +41,20 @@ namespace Enemy
                 return;
             }
 
-            float distance = Vector3.Distance(_agent.transform.position, _target.position);
-            _updateTimer += Time.deltaTime;
+            Vector3 lookPos = _target.position - _agent.transform.position;
+            lookPos.y = 0f;
+            _agent.transform.rotation = Quaternion.LookRotation(lookPos);
 
-            if (_updateTimer >= settings.updateInterval)
+            if (DistanceHelper.IsWithinRange(_agent.transform.position, _target.position, escapeRange))
             {
-                _updateTimer = 0f;
-                Vector3 dirFromPlayer = (_agent.transform.position - _target.position).normalized;
-
-                if (distance < escapeRange)
-                {
-                    animator.SetTrigger(animationParameters.playerTooCloseTrigger);
-                    return;
-                }
-
-                else if (distance > settings.attackRange)
-                {
-                    _agent.SetDestination(_target.position);
-                }
-                else
-                {
-                    _agent.ResetPath();
-                }
-            }
-
-            if (distance > settings.attackRange)
-            {
-                animator.SetTrigger(animationParameters.playerOutRangeTrigger);
+                animator.SetTrigger(animationParameters.playerTooCloseTrigger);
                 return;
             }
 
-            if (distance <= settings.attackRange && distance >= escapeRange)
-            {
-                _cooldownTimer -= Time.deltaTime;
-                if (_cooldownTimer <= 0f)
-                {
-                    _cooldownTimer = attackCooldown;
-                    PerformAttack();
-                }
-            }
+            _agent.ResetPath();
+            base.OnStateUpdate(animator, stateInfo, layerIndex);
         }
+
 
         protected override void PerformAttack()
         {
@@ -90,8 +65,6 @@ namespace Enemy
             bullet.transform.rotation = Quaternion.LookRotation(_target.position - _agent.transform.position);
             bullet.SetActive(true);
         }
-
-        protected override bool IsOutOfRange() => false;
 
         private void InitializePool(int size)
         {
