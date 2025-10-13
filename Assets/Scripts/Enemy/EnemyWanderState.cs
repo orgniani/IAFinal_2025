@@ -66,7 +66,7 @@ namespace Enemy
                 _agent.SetDestination(GetNextDestination());
 
             if (_damageableTarget != null && _damageableTarget.IsAlive && IsPlayerInRange())
-                animator.SetTrigger(animationParameters.playerDetectedTrigger);
+                animator.SetBool(animationParameters.isPlayerDetectedBool, true);
         }
 
         private void ValidateReferences()

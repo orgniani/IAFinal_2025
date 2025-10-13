@@ -66,9 +66,9 @@ namespace Enemy
             }
 
             if (IsInAttackRange())
-                animator.SetTrigger(animationParameters.playerInRangeTrigger);
+                animator.SetBool(animationParameters.isPlayerInRangeBool, true);
             else if (IsOutOfRange())
-                animator.SetTrigger(animationParameters.playerLostTrigger);
+                animator.SetBool(animationParameters.isPlayerDetectedBool, false);
         }
 
         private void ValidateReferences()

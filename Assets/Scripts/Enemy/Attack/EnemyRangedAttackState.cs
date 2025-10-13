@@ -47,7 +47,7 @@ namespace Enemy
 
             if (DistanceHelper.IsWithinRange(_agent.transform.position, _target.position, escapeRange))
             {
-                animator.SetTrigger(animationParameters.playerTooCloseTrigger);
+                animator.SetBool(animationParameters.isPlayerTooCloseBool, true);
                 return;
             }
 

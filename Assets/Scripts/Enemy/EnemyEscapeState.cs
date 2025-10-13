@@ -102,10 +102,10 @@ namespace Enemy
             switch (newState)
             {
                 case RangeState.InOptimal:
-                    animator.SetTrigger(animationParameters.playerInRangeTrigger);
+                    animator.SetBool(animationParameters.isPlayerTooCloseBool, false);
                     break;
                 case RangeState.TooFar:
-                    animator.SetTrigger(animationParameters.playerOutRangeTrigger);
+                    animator.SetBool(animationParameters.isPlayerTooCloseBool, false);
                     break;
             }
         }
