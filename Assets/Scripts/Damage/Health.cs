@@ -12,6 +12,8 @@ namespace Damage
         public event Action OnHit = delegate { };
         public event Action OnDie = delegate { };
 
+        public bool IsAlive => _currentHealth > 0f;
+
         private void Awake()
         {
             _currentHealth = maxHealth;
@@ -31,6 +33,8 @@ namespace Damage
         private void Die()
         {
             OnDie?.Invoke();
+
+            Debug.Log($"{gameObject.name} died.");
 
             //TODO: delete later, just for testing
             if (shouldDespawn) 

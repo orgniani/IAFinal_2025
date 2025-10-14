@@ -7,6 +7,7 @@ namespace Damage
         [SerializeField] private float speed = 20f;
         [SerializeField] private float lifetime = 2f;
         [SerializeField] private float damage = 1f;
+        [SerializeField] private float downOffset = 0.05f;
 
         private float _lifeTimer;
 
@@ -17,7 +18,9 @@ namespace Damage
 
         private void Update()
         {
-            transform.Translate(Vector3.forward * speed * Time.deltaTime);
+            Vector3 direction = Vector3.forward + Vector3.down * downOffset;
+            transform.Translate(direction.normalized * speed * Time.deltaTime, Space.Self);
+
             _lifeTimer -= Time.deltaTime;
 
             if (_lifeTimer <= 0f)
