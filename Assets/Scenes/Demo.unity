@@ -865,6 +865,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 5947.1
       objectReference: {fileID: 0}
+    - target: {fileID: 4585762073529003396, guid: 910177ec26b76c14996c2d53627a6def, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5666553985225028299, guid: 910177ec26b76c14996c2d53627a6def, type: 3}
       propertyPath: m_Layer
       value: 0
@@ -2574,6 +2578,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inputActions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   player: {fileID: 2096615707}
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 8
+  rayDistance: 100
 --- !u!4 &326237933
 Transform:
   m_ObjectHideFlags: 0
@@ -10805,10 +10813,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2096615706}
-  - component: {fileID: 2096615708}
   - component: {fileID: 2096615707}
   - component: {fileID: 2096615709}
   - component: {fileID: 2096615710}
+  - component: {fileID: 2096615712}
+  - component: {fileID: 2096615711}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -10845,31 +10854,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 6
---- !u!143 &2096615708
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2096615705}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Height: 2
-  m_Radius: 0.6
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  rotationSpeed: 720
 --- !u!114 &2096615709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10901,6 +10886,51 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 100
   shouldDespawn: 0
+--- !u!136 &2096615711
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096615705}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2
+  m_Direction: 1
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!195 &2096615712
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2096615705}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1.05
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &2103802084
 PrefabInstance:
   m_ObjectHideFlags: 0

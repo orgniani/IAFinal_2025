@@ -1,44 +1,48 @@
 using Damage;
 using UnityEngine;
+using UnityEngine.AI;
 using System;
 
 namespace Player
 {
-    [RequireComponent(typeof(CharacterController))]
+    [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(Health))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement Settings")]
-        [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private float moveSpeed = 6f;
+        [SerializeField] private float rotationSpeed = 720f;
 
-        private CharacterController _controller;
-        private Camera _mainCamera;
-        private Vector2 _moveInput;
-
+        private NavMeshAgent _agent;
         private Health _health;
 
         public event Action<bool> OnShoot;
-        public CharacterController Controller => _controller;
 
         private void Awake()
         {
-            _controller = GetComponent<CharacterController>();
-            _mainCamera = Camera.main;
+            _agent = GetComponent<NavMeshAgent>();
             _health = GetComponent<Health>();
+
+            _agent.speed = moveSpeed;
+            _agent.updateRotation = false;
         }
 
-        private void Update()
+        public void MoveToClickPoint(Vector3 worldPoint)
         {
             if (!_health.IsAlive)
                 return;
 
-            HandleMovement();
-            HandleRotation();
+            if (!_agent.isOnNavMesh)
+            {
+                Debug.LogWarning($"[PlayerController] Agent is not on NavMesh at {transform.position}");
+                return;
+            }
+
+            _agent.SetDestination(worldPoint);
         }
 
-        public void SetMoveInput(Vector2 input) => _moveInput = input;
 
-        public void SetShootInput(bool shooting)
+        public void Shoot(bool shooting)
         {
             if (!_health.IsAlive)
                 return;
@@ -46,23 +50,23 @@ namespace Player
             OnShoot?.Invoke(shooting);
         }
 
-        private void HandleMovement()
+        public void RotateTowards(Vector3 worldPos)
         {
-            Vector3 input = new Vector3(_moveInput.x, 0f, _moveInput.y).normalized;
-            _controller.SimpleMove(input * moveSpeed);
-        }
+            if (!_health.IsAlive)
+                return;
 
-        private void HandleRotation()
-        {
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
-            {
-                Vector3 lookDir = hit.point - transform.position;
-                lookDir.y = 0f;
+            Vector3 direction = worldPos - transform.position;
+            direction.y = 0f;
 
-                if (lookDir.sqrMagnitude > 0.01f)
-                    transform.rotation = Quaternion.LookRotation(lookDir);
-            }
+            if (direction.sqrMagnitude < 0.001f)
+                return;
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 }

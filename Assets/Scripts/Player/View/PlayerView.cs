@@ -1,5 +1,6 @@
 using UnityEngine;
 using Helpers;
+using UnityEngine.AI;
 
 namespace Player
 {
@@ -18,10 +19,17 @@ namespace Player
 
         private Animator _animator;
 
+        private Transform _playerTransform;
+        private NavMeshAgent _playerAgent;
+
         private void Awake()
         {
             _animator = GetComponent<Animator>();
+
             ValidateReferences();
+
+            _playerTransform = player.transform;
+            _playerAgent = player.GetComponent<NavMeshAgent>();
         }
 
         private void OnEnable()
@@ -36,7 +44,8 @@ namespace Player
 
         private void Update()
         {
-            Vector3 localVelocity = transform.InverseTransformDirection(player.Controller.velocity);
+            Vector3 velocity = _playerAgent.velocity;
+            Vector3 localVelocity = _playerTransform.InverseTransformDirection(velocity);
 
             float moveX = localVelocity.x;
             float moveZ = localVelocity.z;
