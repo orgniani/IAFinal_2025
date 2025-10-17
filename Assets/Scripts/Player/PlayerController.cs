@@ -6,7 +6,7 @@ using System;
 namespace Player
 {
     [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(Health))]
+    [RequireComponent(typeof(HealthController))]
     public class PlayerController : MonoBehaviour
     {
         [Header("Movement Settings")]
@@ -14,14 +14,14 @@ namespace Player
         [SerializeField] private float rotationSpeed = 720f;
 
         private NavMeshAgent _agent;
-        private Health _health;
+        private HealthController _health;
 
         public event Action<bool> OnShoot;
 
         private void Awake()
         {
             _agent = GetComponent<NavMeshAgent>();
-            _health = GetComponent<Health>();
+            _health = GetComponent<HealthController>();
 
             _agent.speed = moveSpeed;
             _agent.updateRotation = false;

@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Helpers;
 using Player;
+using Helpers;
+using VFX;
 
 namespace Input
 {
@@ -12,6 +13,7 @@ namespace Input
 
         [Header("References")]
         [SerializeField] private PlayerController player;
+        [SerializeField] private ClickIndicatorController clickIndicatorController;
 
         [Header("Settings")]
         [SerializeField] private LayerMask groundMask;
@@ -42,7 +44,6 @@ namespace Input
             {
                 _lookAction.performed += HandleLookInput;
                 _lookAction.canceled += HandleLookInput;
-
             }
 
             _attackAction = inputActions.FindAction("Attack");
@@ -65,7 +66,6 @@ namespace Input
             {
                 _lookAction.performed -= HandleLookInput;
                 _lookAction.canceled -= HandleLookInput;
-
             }
 
             if (_attackAction != null)
@@ -80,7 +80,10 @@ namespace Input
             Vector2 screenPos = Mouse.current.position.ReadValue();
 
             if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos))
+            {
                 player.MoveToClickPoint(worldPos);
+                clickIndicatorController?.SpawnIndicator(worldPos);
+            }
         }
 
         private void HandleLookInput(InputAction.CallbackContext ctx)

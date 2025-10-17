@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Damage
 {
-    public class Health : MonoBehaviour, IDamageable
+    public class HealthController : MonoBehaviour, IDamageable
     {
         [SerializeField] private float maxHealth = 3f;
         [SerializeField] private bool shouldDespawn = true;
@@ -13,6 +13,8 @@ namespace Damage
         public event Action OnDie = delegate { };
 
         public bool IsAlive => _currentHealth > 0f;
+        public float Health => _currentHealth;
+        public float MaxHealth => maxHealth;
 
         private void Awake()
         {
