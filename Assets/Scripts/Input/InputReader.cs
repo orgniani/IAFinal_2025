@@ -97,7 +97,7 @@ namespace Input
         {
             worldPos = Vector3.zero;
 
-            if (Camera.main == null)
+            if (_mainCamera == null)
             {
                 Debug.LogError("[InputReader] Camera.main is NULL. Cannot raycast.");
                 return false;
@@ -106,7 +106,7 @@ namespace Input
             screenPos.x = Mathf.Clamp(screenPos.x, 0, Screen.width - 1);
             screenPos.y = Mathf.Clamp(screenPos.y, 0, Screen.height - 1);
 
-            Ray ray = Camera.main.ScreenPointToRay(screenPos);
+            Ray ray = _mainCamera.ScreenPointToRay(screenPos);
             RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance);
             if (hits.Length == 0)
                 return false;
