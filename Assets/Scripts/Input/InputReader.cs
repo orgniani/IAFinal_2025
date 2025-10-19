@@ -79,7 +79,7 @@ namespace Input
         {
             Vector2 screenPos = Mouse.current.position.ReadValue();
 
-            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos))
+            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos, stopOnObstacles: true))
             {
                 player.MoveToClickPoint(worldPos);
                 clickIndicatorController?.SpawnIndicator(worldPos);
@@ -89,21 +89,48 @@ namespace Input
         private void HandleLookInput(InputAction.CallbackContext ctx)
         {
             Vector2 screenPos = Mouse.current.position.ReadValue();
-
-            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos))
+            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos, stopOnObstacles: false))
                 player.RotateTowards(worldPos);
         }
 
-        private bool TryGetMouseWorldPosition(Vector2 screenPos, out Vector3 worldPos)
+        private bool TryGetMouseWorldPosition(Vector2 screenPos, out Vector3 worldPos, bool stopOnObstacles)
         {
             worldPos = Vector3.zero;
-            Ray ray = _mainCamera.ScreenPointToRay(screenPos);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance, groundMask))
+            if (Camera.main == null)
             {
-                worldPos = hit.point;
-                return true;
+                Debug.LogError("[InputReader] Camera.main is NULL. Cannot raycast.");
+                return false;
             }
+
+            screenPos.x = Mathf.Clamp(screenPos.x, 0, Screen.width - 1);
+            screenPos.y = Mathf.Clamp(screenPos.y, 0, Screen.height - 1);
+
+            Ray ray = Camera.main.ScreenPointToRay(screenPos);
+            RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance);
+            if (hits.Length == 0)
+                return false;
+
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            foreach (var hit in hits)
+            {
+                int layer = hit.collider.gameObject.layer;
+                bool isGround = (groundMask & (1 << layer)) != 0;
+
+                if (isGround)
+                {
+                    worldPos = hit.point;
+                    return true;
+                }
+
+                if (stopOnObstacles)
+                {
+                    Debug.Log($"[InputReader] Blocked by '{hit.collider.name}' on layer {layer} ({LayerMask.LayerToName(layer)})");
+                    return false;
+                }
+            }
+
             return false;
         }
 
