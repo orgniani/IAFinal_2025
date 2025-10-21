@@ -13,12 +13,12 @@ namespace Scenery
     public class SceneryManager : MonoBehaviour
     {
         [Header("Parameters")]
-
         [Tooltip("Artificial delay after scene load/unload to ensure UI animations have time to play.")]
         [SerializeField] private float fakeLoadingTime = 1;
 
         [Header("Invoke events")]
         [SerializeField] private EmptyAction onLoadStart;
+        [SerializeField] private FloatAction onLoadProgress;
         [SerializeField] private EmptyAction onLoadEnd;
 
         [Header("Logs")]
@@ -39,7 +39,6 @@ namespace Scenery
         public void SetUp(SceneData[] sceneryLoadIds, int[] protectedScenes)
         {
             ValidateReferences();
-
             _currentLevelIds = new int[0];
             _protectedSceneIndexes = new HashSet<int>(protectedScenes);
         }
@@ -61,11 +60,12 @@ namespace Scenery
             _currentLevelIds = scenesToLoad;
         }
 
+        /// <summary>
+        /// Unloads a set of scenes without loading new ones.
+        /// </summary>
         public void HandleUnloadScenery(int[] scenesToUnload)
         {
             StartCoroutine(UnloadAndLoadScenes(scenesToUnload, Array.Empty<int>()));
-
-            // If these are the current level, clear current level tracker
             if (_currentLevelIds != null && _currentLevelIds.SequenceEqual(scenesToUnload))
                 _currentLevelIds = Array.Empty<int>();
         }
@@ -79,12 +79,42 @@ namespace Scenery
             onLoadStart?.InvokeEvent();
             yield return new WaitForSeconds(fakeLoadingTime);
 
+            float unloadProgress = 0f;
+            float loadProgress = 0f;
+            int activePhases = 0;
+            if (unloadSceneIndexes.Length > 0) activePhases++;
+            if (loadSceneIndexes.Length > 0) activePhases++;
+            if (activePhases == 0) activePhases = 1;
+
             if (unloadSceneIndexes.Length > 0)
-                yield return Unload(unloadSceneIndexes, false);
+            {
+                yield return Unload(unloadSceneIndexes, false, progress =>
+                {
+                    unloadProgress = progress;
+                    float totalProgress = (unloadProgress / activePhases);
+                    onLoadProgress?.InvokeEvent(totalProgress);
+                });
+            }
+            else
+            {
+                unloadProgress = 1f;
+            }
 
             if (loadSceneIndexes.Length > 0)
-                yield return Load(loadSceneIndexes);
+            {
+                yield return Load(loadSceneIndexes, progress =>
+                {
+                    loadProgress = progress;
+                    float totalProgress = ((unloadProgress + loadProgress) / activePhases);
+                    onLoadProgress?.InvokeEvent(totalProgress);
+                });
+            }
+            else
+            {
+                loadProgress = 1f;
+            }
 
+            onLoadProgress?.InvokeEvent(1f);
             yield return new WaitForSeconds(fakeLoadingTime);
 
             _currentLevelIds = loadSceneIndexes;
@@ -93,9 +123,13 @@ namespace Scenery
 
         /// <summary>
         /// Loads scenes additively from the provided list.
+        /// Reports progress during the process.
         /// </summary>
-        private IEnumerator Load(int[] sceneIndexes)
+        private IEnumerator Load(int[] sceneIndexes, Action<float> onProgress = null)
         {
+            int totalScenes = sceneIndexes.Length;
+            int completedScenes = 0;
+
             foreach (var sceneIndex in sceneIndexes)
             {
                 var loadOp = SceneManager.LoadSceneAsync(sceneIndex, LoadSceneMode.Additive);
@@ -106,21 +140,36 @@ namespace Scenery
                     continue;
                 }
 
+                loadOp.allowSceneActivation = true;
+
                 while (!loadOp.isDone)
+                {
+                    float totalProgress = (completedScenes + loadOp.progress) / totalScenes;
+                    onProgress?.Invoke(totalProgress);
                     yield return null;
+                }
+
+                completedScenes++;
+                onProgress?.Invoke((float)completedScenes / totalScenes);
             }
         }
 
         /// <summary>
         /// Unloads scenes from the provided list if allowed.
+        /// Reports progress during the process.
         /// </summary>
-        private IEnumerator Unload(int[] sceneIndexes, bool force = false)
+        private IEnumerator Unload(int[] sceneIndexes, bool force = false, Action<float> onProgress = null)
         {
+            int totalScenes = sceneIndexes.Length;
+            int completedScenes = 0;
+
             foreach (var sceneIndex in sceneIndexes)
             {
                 if (!force && _protectedSceneIndexes.Contains(sceneIndex))
                 {
                     if (enableLogs) Debug.Log($"Skipping unload of protected scene at index {sceneIndex}");
+                    completedScenes++;
+                    onProgress?.Invoke((float)completedScenes / totalScenes);
                     continue;
                 }
 
@@ -131,20 +180,28 @@ namespace Scenery
                     if (unloadOp == null)
                     {
                         if (enableLogs) Debug.LogError($"Failed to unload scene at index {sceneIndex}");
+                        completedScenes++;
+                        onProgress?.Invoke((float)completedScenes / totalScenes);
                         continue;
                     }
 
                     while (!unloadOp.isDone)
+                    {
+                        float totalProgress = (completedScenes + unloadOp.progress) / totalScenes;
+                        onProgress?.Invoke(totalProgress);
                         yield return null;
-                }
+                    }
 
+                    completedScenes++;
+                    onProgress?.Invoke((float)completedScenes / totalScenes);
+                }
                 else
                 {
                     if (enableLogs)
-                    {
-                        Debug.Log($"<color=purple> Scene at index {sceneIndex} is not currently loaded.\n" +
-                                  $"Skipping unload operation. </color>");
-                    }
+                        Debug.Log($"<color=purple> Scene at index {sceneIndex} is not currently loaded. Skipping unload operation. </color>");
+
+                    completedScenes++;
+                    onProgress?.Invoke((float)completedScenes / totalScenes);
                 }
             }
         }
@@ -153,6 +210,7 @@ namespace Scenery
         {
             ReferenceValidator.Validate(onLoadStart, nameof(onLoadStart), this);
             ReferenceValidator.Validate(onLoadEnd, nameof(onLoadEnd), this);
+            ReferenceValidator.Validate(onLoadProgress, nameof(onLoadProgress), this);
         }
     }
 }

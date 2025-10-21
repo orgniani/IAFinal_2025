@@ -1,6 +1,8 @@
 using System.Collections;
 using UnityEngine;
 using Events;
+using UnityEngine.UI;
+using Helpers;
 
 namespace UI
 {
@@ -8,18 +10,26 @@ namespace UI
     {
         [Header("References")]
         [SerializeField] private Canvas transitionCanvas;
+        [SerializeField] private Slider loadBar;
 
+        [Header("Parameters")]
         [Tooltip("Delay before hiding the transition canvas after scene load ends.")]
         [SerializeField] private float waitToDisableScreen = 1.5f;
 
         [Tooltip("Trigger name used to play the 'close' animation on the transition canvas.")]
         [SerializeField] private string closeAnimationTrigger = "close";
 
+        [Tooltip("How long it takes for the load bar to reach the new value.")]
+        [SerializeField] private float fillDuration = 0.5f;
+
         [Header("Subscribe to events")]
         [SerializeField] private EmptyAction onLoadStart;
+        [SerializeField] private FloatAction onLoadProgress;
         [SerializeField] private EmptyAction onLoadEnd;
 
         private Animator _canvasAnimator;
+
+        private Coroutine _fillCoroutine;
         private Coroutine _disablePopUpCoroutine;
 
         private void Awake()
@@ -32,16 +42,22 @@ namespace UI
         {
             onLoadStart.Subscribe(EnableLoadingScreen);
             onLoadEnd.Subscribe(DisableLoadingScreen);
+
+            onLoadProgress.Subscribe(UpdateLoadBarFill);
         }
 
         private void OnDisable()
         {
             onLoadStart.Unsubscribe(EnableLoadingScreen);
             onLoadEnd.Unsubscribe(DisableLoadingScreen);
+
+            onLoadProgress.Unsubscribe(UpdateLoadBarFill);
         }
 
         private void EnableLoadingScreen()
         {
+            loadBar.value = 0f;
+
             if (_disablePopUpCoroutine != null)
             {
                 StopCoroutine(_disablePopUpCoroutine);
@@ -69,22 +85,39 @@ namespace UI
             transitionCanvas.gameObject.SetActive(false);
             _disablePopUpCoroutine = null;
         }
-        private void ValidateReferences()
+
+        private void UpdateLoadBarFill(float percentage)
         {
-            if (!ValidateReference(transitionCanvas, nameof(transitionCanvas))) return;
-            if (!ValidateReference(_canvasAnimator, nameof(_canvasAnimator))) return;
-            if (!ValidateReference(onLoadStart, nameof(onLoadStart))) return;
-            if (!ValidateReference(onLoadEnd, nameof(onLoadEnd))) return;
+            if (_fillCoroutine != null)
+                StopCoroutine(_fillCoroutine);
+
+            _fillCoroutine = StartCoroutine(LerpFill(loadBar.value, percentage));
         }
 
-        private bool ValidateReference(Object reference, string referenceName)
+        private IEnumerator LerpFill(float from, float to)
         {
-            if (reference != null) return true;
+            float startTime = Time.time;
+            float startFillAmount = loadBar.value;
 
-            Debug.LogError($"{name}: {referenceName} is null!" +
-                           $"\nDisabling component to avoid errors.");
-            enabled = false;
-            return false;
+            while (Time.time < startTime + fillDuration)
+            {
+                float t = (Time.time - startTime) / fillDuration;
+                loadBar.value = Mathf.Lerp(startFillAmount, to, t);
+                yield return null;
+            }
+
+            loadBar.value = to;
+        }
+
+        private void ValidateReferences()
+        {
+            ReferenceValidator.Validate(transitionCanvas, nameof(transitionCanvas), this);
+            ReferenceValidator.Validate(loadBar, nameof(loadBar), this);
+            ReferenceValidator.Validate(_canvasAnimator, nameof(_canvasAnimator), this);
+
+            ReferenceValidator.Validate(onLoadStart, nameof(onLoadStart), this);
+            ReferenceValidator.Validate(onLoadEnd, nameof(onLoadEnd), this);
+            ReferenceValidator.Validate(onLoadProgress, nameof(onLoadProgress), this);
         }
     }
 }

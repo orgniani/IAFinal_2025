@@ -9,6 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d80c6c6b63008b458f3a4ba2b6bc4a8, type: 3}
-  m_Name: Source_PlacementHandlerData
+  m_Script: {fileID: 11500000, guid: 5479c8464f0942349a8d8957f15ee06b, type: 3}
+  m_Name: LoadProgressEvent
   m_EditorClassIdentifier: 
+  _config:
+    <listenerEvent>k__BackingField: 0
+    <eventLog>k__BackingField: 0
