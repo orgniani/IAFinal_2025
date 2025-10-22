@@ -2,6 +2,7 @@ using Damage;
 using UnityEngine;
 using UnityEngine.AI;
 using System;
+using DataSource;
 
 namespace Player
 {
@@ -9,6 +10,9 @@ namespace Player
     [RequireComponent(typeof(HealthController))]
     public class PlayerController : MonoBehaviour
     {
+        [Header("Data Sourcer")]
+        [SerializeField] private HealthControllerSource healthControllerSource;
+
         [Header("Movement Settings")]
         [SerializeField] private float moveSpeed = 6f;
         [SerializeField] private float rotationSpeed = 720f;
@@ -25,6 +29,18 @@ namespace Player
 
             _agent.speed = moveSpeed;
             _agent.updateRotation = false;
+        }
+
+        private void OnEnable()
+        {
+            if (!healthControllerSource.DataInstance)
+                healthControllerSource.DataInstance = _health;
+        }
+
+        private void OnDisable()
+        {
+            if (healthControllerSource.DataInstance == _health)
+                healthControllerSource.DataInstance = null;
         }
 
         public void MoveToClickPoint(Vector3 worldPoint)

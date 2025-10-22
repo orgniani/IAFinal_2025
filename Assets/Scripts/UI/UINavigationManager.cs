@@ -107,6 +107,8 @@ namespace UI
         /// </summary>
         private void InitializeButtonHandlers()
         {
+            _buttonHandlers[UIButtonAction.Quit] = _ => HandleQuit();
+
             _buttonHandlers[UIButtonAction.None] = id =>
             { if (id.HasValue) HandleNavigation(id.Value); };
 
@@ -211,6 +213,17 @@ namespace UI
 
             if (enableLogs) Debug.LogWarning($"{name}: Menu with ID '{id}' not found.");
             return null;
+        }
+
+        private void HandleQuit()
+        {
+            if (enableLogs) Debug.Log($"{name}: Quit button pressed.");
+
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
         }
 
         private void ValidateReferences()

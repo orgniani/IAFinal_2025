@@ -2,40 +2,89 @@ using UnityEngine;
 using UnityEngine.UI;
 using Damage;
 using Helpers;
+using System.Collections;
 
 namespace UI
 {
     public class UIHealthBar : MonoBehaviour
     {
         [Header("References")]
+        [SerializeField] private HealthController directHealthController;
+        [SerializeField] private HealthControllerSource healthControllerSource;
         [SerializeField] private Slider healthBar;
-        [SerializeField] private HealthController healthController;
+
+        private HealthController _healthController;
+        private Coroutine _initRoutine;
 
         private void Awake()
         {
             ReferenceValidator.Validate(healthBar, nameof(healthBar), this);
-            ReferenceValidator.Validate(healthController, nameof(healthController), this);
         }
 
         private void OnEnable()
         {
-            healthController.OnHit += HandleHealthBar;
-        }
-
-        private void Start()
-        {
-            HandleHealthBar();
+            _initRoutine = StartCoroutine(InitializeHealthReference());
         }
 
         private void OnDisable()
         {
-            healthController.OnHit -= HandleHealthBar;
+            UnsubscribeEvents();
+
+            if (_initRoutine != null)
+                StopCoroutine(_initRoutine);
+        }
+
+        private IEnumerator InitializeHealthReference()
+        {
+            yield return null;
+
+            if (directHealthController != null)
+            {
+                SetHealthController(directHealthController);
+                yield break;
+            }
+
+            if (healthControllerSource != null)
+            {
+                while (healthControllerSource.DataInstance == null)
+                    yield return null;
+
+                SetHealthController(healthControllerSource.DataInstance);
+            }
+        }
+
+        private void SetHealthController(HealthController controller)
+        {
+            UnsubscribeEvents();
+            _healthController = controller;
+
+            if (_healthController == null)
+            {
+                ResetBar();
+                return;
+            }
+
+            _healthController.OnHit += HandleHealthBar;
+            HandleHealthBar();
+        }
+
+        private void UnsubscribeEvents()
+        {
+            if (_healthController != null)
+                _healthController.OnHit -= HandleHealthBar;
         }
 
         private void HandleHealthBar()
         {
-            if (!healthBar) return;
-            healthBar.value = 1.0f * healthController.Health / healthController.MaxHealth;
+            if (!healthBar || _healthController == null)
+                return;
+
+            healthBar.value = (float)_healthController.Health / _healthController.MaxHealth;
+        }
+        private void ResetBar()
+        {
+            if (healthBar)
+                healthBar.value = 1f;
         }
     }
 }

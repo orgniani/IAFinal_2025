@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7f4f2ea234ac42442a0d6e7c5d322ece, type: 3}
-  m_Name: BackFromGame_BtnCfg
+  m_Name: Quit_BtnCfg
   m_EditorClassIdentifier: 
-  <MenuSource>k__BackingField: {fileID: 11400000, guid: 74cb7b11b5dbdbc49945a58de0f61edc, type: 2}
-  <Action>k__BackingField: 4
+  <MenuSource>k__BackingField: {fileID: 0}
+  <Action>k__BackingField: 5
   <Text>k__BackingField: 
-  <Sprite>k__BackingField: {fileID: 21300000, guid: 8bce6060843091b409be8d5db74524ac, type: 3}
+  <Sprite>k__BackingField: {fileID: 21300000, guid: bae75953831862c4aa084169bcffdf85, type: 3}
   <Icon>k__BackingField: {fileID: 0}
   <Tint>k__BackingField: {r: 1, g: 1, b: 1, a: 1}

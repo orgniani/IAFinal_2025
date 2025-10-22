@@ -5,7 +5,7 @@ using Events;
 
 namespace Managers
 {
-    public class GameManager : MonoBehaviour
+    public class LevelManager : MonoBehaviour
     {
         [SerializeField] private HealthController playerHP;
         [SerializeField] private EmptyAction onLoseEvent;

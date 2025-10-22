@@ -6,6 +6,7 @@ namespace UI.Buttons
         Play,
         Restart,
         BackFromMenu,
-        BackFromGame
+        BackFromGame,
+        Quit
     }
 }
