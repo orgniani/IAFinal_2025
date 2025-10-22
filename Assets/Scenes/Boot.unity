@@ -638,6 +638,7 @@ MonoBehaviour:
   flowManagerDataSource: {fileID: 11400000, guid: 5099419fb3181cd4f851ced4238d8dea, type: 2}
   sceneryManager: {fileID: 444253166}
   persistentBatch: {fileID: 11400000, guid: 4916e8eb7094fe74fbffb978fab5f40c, type: 2}
+  worldBatch: {fileID: 11400000, guid: f64cdfc58e9a2604db801404a02483f4, type: 2}
   levels:
   - {fileID: 11400000, guid: 7c303388f1db1714f93b1bee7a557057, type: 2}
 --- !u!1660057539 &9223372036854775807
