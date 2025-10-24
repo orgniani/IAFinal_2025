@@ -2087,7 +2087,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.101960786}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2178,7 +2178,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7499221005007398592}
   - component: {fileID: 1036994376282395466}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: WizardBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2652,8 +2652,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aef6605e1d9dbd42989be52913d3c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  directHealthController: {fileID: 6393893837332156067}
+  healthControllerSource: {fileID: 0}
   healthBar: {fileID: 4163208945146105844}
-  healthController: {fileID: 6393893837332156067}
 --- !u!114 &1790407490076587086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2984,8 +2985,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.25, y: 0.5}
-  m_SizeDelta: {x: -5.5, y: -6}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8730109434072929568
 GameObject:

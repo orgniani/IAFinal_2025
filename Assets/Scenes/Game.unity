@@ -792,6 +792,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1197669062228323530, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_Color.a
+      value: 0.101960786
+      objectReference: {fileID: 0}
     - target: {fileID: 2283677533345937545, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
       propertyPath: m_Camera
       value: 
@@ -844,14 +848,38 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6680160855714244737, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_Value
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6769484184387676296, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
       propertyPath: m_Name
       value: MeleeEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784799140236670629, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784799140236670629, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784799140236670629, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7784799140236670629, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8774769481040812688, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
       propertyPath: directHealthController
       value: 
       objectReference: {fileID: 1418090913}
+    - target: {fileID: 9177356459983445879, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1125,14 +1153,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: RangedEnemy
       objectReference: {fileID: 0}
-    - target: {fileID: 2981548639217577788, guid: 1205ece1724d38e449411c5fe16ba0eb, type: 3}
-      propertyPath: m_Camera
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 8322845549944532669, guid: 1205ece1724d38e449411c5fe16ba0eb, type: 3}
-      propertyPath: directHealthController
-      value: 
-      objectReference: {fileID: 1884053111}
     - target: {fileID: 8751784866239417579, guid: 1205ece1724d38e449411c5fe16ba0eb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 95.2
@@ -1178,17 +1198,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1205ece1724d38e449411c5fe16ba0eb, type: 3}
---- !u!114 &1884053111 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6393893837332156067, guid: 1205ece1724d38e449411c5fe16ba0eb, type: 3}
-  m_PrefabInstance: {fileID: 1884053110}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd4fa896843500442a22240ae3dd082b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1971268695
 GameObject:
   m_ObjectHideFlags: 0
