@@ -14,10 +14,10 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
-  m_FogDensity: 0.01
+  m_Fog: 1
+  m_FogColor: {r: 0.142, g: 0.20511112, b: 0.284, a: 1}
+  m_FogMode: 2
+  m_FogDensity: 0.04
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
   m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: ec37971901c821a48b25b6282095a315, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -338,7 +338,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: 0.54870176, y: 0.000023939892, z: -0.00003647553, w: 0.8360182}
-  m_LocalPosition: {x: 119.8, y: 21.21, z: 49.7}
+  m_LocalPosition: {x: 21.150002, y: 21.21, z: 0.5999985}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -638,7 +638,6 @@ MonoBehaviour:
   flowManagerDataSource: {fileID: 11400000, guid: 5099419fb3181cd4f851ced4238d8dea, type: 2}
   sceneryManager: {fileID: 444253166}
   persistentBatch: {fileID: 11400000, guid: 4916e8eb7094fe74fbffb978fab5f40c, type: 2}
-  worldBatch: {fileID: 11400000, guid: f64cdfc58e9a2604db801404a02483f4, type: 2}
   levels:
   - {fileID: 11400000, guid: 7c303388f1db1714f93b1bee7a557057, type: 2}
 --- !u!1660057539 &9223372036854775807

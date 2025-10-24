@@ -78,7 +78,7 @@ namespace Enemy
             if (_bulletPool.Count >= maxPoolSize)
                 return null;
 
-            GameObject bullet = GameObject.Instantiate(bulletPrefab);
+            GameObject bullet = Instantiate(bulletPrefab, _agent.transform);
             bullet.SetActive(false);
             _bulletPool.Add(bullet);
             return bullet;
