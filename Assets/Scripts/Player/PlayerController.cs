@@ -20,7 +20,7 @@ namespace Player
         private NavMeshAgent _agent;
         private HealthController _health;
 
-        public event Action<bool> OnShoot;
+        public event Action<bool, Transform> OnShoot;
 
         private void Awake()
         {
@@ -57,13 +57,12 @@ namespace Player
             _agent.SetDestination(worldPoint);
         }
 
-
-        public void Shoot(bool shooting)
+        public void Shoot(bool shooting, Transform target)
         {
             if (!_health.IsAlive)
                 return;
 
-            OnShoot?.Invoke(shooting);
+            OnShoot?.Invoke(shooting, target);
         }
 
         public void RotateTowards(Vector3 worldPos)

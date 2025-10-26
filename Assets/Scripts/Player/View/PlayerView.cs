@@ -54,7 +54,7 @@ namespace Player
             _animator.SetFloat(moveZParameter, moveZ, dampTime, Time.deltaTime);
         }
 
-        private void HandleShooting(bool isShooting)
+        private void HandleShooting(bool isShooting, Transform target)
         {
             _animator.SetBool(shootBoolParameter, isShooting);
         }

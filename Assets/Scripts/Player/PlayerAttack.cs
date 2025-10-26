@@ -1,3 +1,4 @@
+using Damage;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,7 +10,7 @@ namespace Player
     {
         [Header("References")]
         [SerializeField] private Transform firePoint;
-        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private Bullet bulletPrefab;
 
         [Header("Pool Settings")]
         [SerializeField] private int minPoolSize = 5;
@@ -17,11 +18,12 @@ namespace Player
 
         [Header("Attack Settings")]
         [SerializeField] private float fireRate = 0.2f;
+        [SerializeField] private float targetVerticalOffset = 1.2f;
 
         private PlayerController _player;
-
-        private List<GameObject> _bulletPool;
+        private List<Bullet> _bulletPool;
         private Coroutine _shootingRoutine;
+        private Transform _currentTarget;
 
         private void Awake()
         {
@@ -41,25 +43,27 @@ namespace Player
 
         private void InitializePool(int size)
         {
-            _bulletPool = new List<GameObject>();
+            _bulletPool = new List<Bullet>();
 
             for (int i = 0; i < size; i++)
                 AddBulletToPool();
         }
 
-        private GameObject AddBulletToPool()
+        private Bullet AddBulletToPool()
         {
             if (_bulletPool.Count >= maxPoolSize)
                 return null;
 
-            GameObject bullet = Instantiate(bulletPrefab);
-            bullet.SetActive(false);
+            Bullet bullet = Instantiate(bulletPrefab);
+            bullet.gameObject.SetActive(false);
             _bulletPool.Add(bullet);
             return bullet;
         }
 
-        private void HandleShoot(bool shooting)
+        private void HandleShoot(bool shooting, Transform target)
         {
+            _currentTarget = target;
+
             if (shooting)
             {
                 if (_shootingRoutine == null)
@@ -88,19 +92,32 @@ namespace Player
 
         private void SpawnBullet()
         {
-            GameObject bullet = GetPooledBullet();
+            Bullet bullet = GetPooledBullet();
             if (bullet == null) return;
 
             bullet.transform.position = firePoint.position;
-            bullet.transform.rotation = firePoint.rotation;
-            bullet.SetActive(true);
+
+            Vector3 direction;
+            if (_currentTarget != null)
+            {
+                Vector3 targetPos = _currentTarget.position + Vector3.up * targetVerticalOffset;
+                direction = (targetPos - firePoint.position).normalized;
+            }
+            else
+            {
+                direction = firePoint.forward;
+            }
+
+            bullet.transform.rotation = Quaternion.LookRotation(direction);
+            bullet.gameObject.SetActive(true);
+            bullet.SetDirection(direction);
         }
 
-        private GameObject GetPooledBullet()
+        private Bullet GetPooledBullet()
         {
             foreach (var bullet in _bulletPool)
             {
-                if (!bullet.activeInHierarchy)
+                if (!bullet.gameObject.activeInHierarchy)
                     return bullet;
             }
 

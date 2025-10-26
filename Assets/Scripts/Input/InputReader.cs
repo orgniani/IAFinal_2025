@@ -13,6 +13,7 @@ namespace Input
 
         [Header("References")]
         [SerializeField] private PlayerController player;
+        [SerializeField] private TargetManager targetManager;
         [SerializeField] private ClickIndicatorController clickIndicatorController;
 
         [Header("Settings")]
@@ -79,29 +80,20 @@ namespace Input
         {
             Vector2 screenPos = Mouse.current.position.ReadValue();
 
-            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos, stopOnObstacles: true))
+            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos))
             {
                 player.MoveToClickPoint(worldPos);
                 clickIndicatorController?.SpawnIndicator(worldPos);
             }
         }
 
-        private void HandleLookInput(InputAction.CallbackContext ctx)
-        {
-            Vector2 screenPos = Mouse.current.position.ReadValue();
-            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos, stopOnObstacles: false))
-                player.RotateTowards(worldPos);
-        }
 
-        private bool TryGetMouseWorldPosition(Vector2 screenPos, out Vector3 worldPos, bool stopOnObstacles)
+        private bool TryGetMouseWorldPosition(Vector2 screenPos, out Vector3 worldPos)
         {
             worldPos = Vector3.zero;
 
-            if (_mainCamera == null)
-            {
-                Debug.LogError("[InputReader] Camera.main is NULL. Cannot raycast.");
+            if (!ValidateCamera())
                 return false;
-            }
 
             screenPos.x = Mathf.Clamp(screenPos.x, 0, Screen.width - 1);
             screenPos.y = Mathf.Clamp(screenPos.y, 0, Screen.height - 1);
@@ -124,20 +116,57 @@ namespace Input
                     return true;
                 }
 
-                if (stopOnObstacles)
-                {
-                    Debug.Log($"[InputReader] Blocked by '{hit.collider.name}' on layer {layer} ({LayerMask.LayerToName(layer)})");
-                    return false;
-                }
+                return false;
             }
 
             return false;
         }
 
+        private void HandleLookInput(InputAction.CallbackContext ctx)
+        {
+            Vector2 screenPos = Mouse.current.position.ReadValue();
+
+            if (!ValidateCamera())
+                return;
+
+            Ray ray = _mainCamera.ScreenPointToRay(screenPos);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
+            if (groundPlane.Raycast(ray, out float enter))
+            {
+                Vector3 worldPos = ray.GetPoint(enter);
+                player.RotateTowards(worldPos);
+            }
+
+            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance))
+                targetManager?.UpdateHoverTarget(hit.collider.gameObject);
+            else
+                targetManager?.UpdateHoverTarget(null);
+        }
+
+        private bool ValidateCamera()
+        {
+            if (_mainCamera == null)
+            {
+                Debug.LogError("[InputReader] Camera.main is NULL. Cannot raycast.");
+                return false;
+            }
+            return true;
+        }
+
         private void HandleShootInput(InputAction.CallbackContext ctx)
         {
             bool shooting = ctx.phase != InputActionPhase.Canceled;
-            player.Shoot(shooting);
+
+            GameObject target = targetManager ? targetManager.CurrentTarget : null;
+
+            if (target != null)
+            {
+                player.Shoot(shooting, target.transform);
+                return;
+            }
+
+            player.Shoot(shooting, null);
         }
 
         private void ValidateReferences()

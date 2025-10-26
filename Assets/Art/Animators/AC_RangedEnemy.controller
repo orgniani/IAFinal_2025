@@ -17,7 +17,7 @@ AnimatorStateMachine:
     m_Position: {x: 30, y: 400, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2544983598363570995}
-    m_Position: {x: 320, y: 390, z: 0}
+    m_Position: {x: 320, y: 400, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7153980310696979099}
     m_Position: {x: 320, y: 250, z: 0}
@@ -414,7 +414,7 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: 633016fff47f0c345b139bbf80ed0561, type: 2}
   attackCooldown: 2
   escapeRange: 4
-  bulletPrefab: {fileID: 7102261425330031319, guid: 2bfcb7845a82ade4c83516896d4186f3, type: 3}
+  bulletPrefab: {fileID: 2997589166512543401, guid: 2bfcb7845a82ade4c83516896d4186f3, type: 3}
   minPoolSize: 3
   maxPoolSize: 10
 --- !u!1101 &4919796853025742768
