@@ -9,8 +9,7 @@ namespace UI
     public class UIHealthBar : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private HealthController directHealthController;
-        [SerializeField] private HealthControllerSource healthControllerSource;
+        [SerializeField] private HealthController healthController;
         [SerializeField] private Slider healthBar;
 
         private HealthController _healthController;
@@ -38,18 +37,10 @@ namespace UI
         {
             yield return null;
 
-            if (directHealthController != null)
+            if (healthController != null)
             {
-                SetHealthController(directHealthController);
+                SetHealthController(healthController);
                 yield break;
-            }
-
-            if (healthControllerSource != null)
-            {
-                while (healthControllerSource.DataInstance == null)
-                    yield return null;
-
-                SetHealthController(healthControllerSource.DataInstance);
             }
         }
 

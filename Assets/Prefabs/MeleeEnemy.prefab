@@ -674,8 +674,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aef6605e1d9dbd42989be52913d3c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  directHealthController: {fileID: 6441960792770538308}
-  healthControllerSource: {fileID: 0}
+  healthController: {fileID: 6441960792770538308}
   healthBar: {fileID: 6680160855714244737}
 --- !u!114 &7796308743693009542
 MonoBehaviour:
@@ -1905,6 +1904,7 @@ GameObject:
   - component: {fileID: 6441960792770538308}
   - component: {fileID: 1275519856075714900}
   - component: {fileID: 4084924489350739878}
+  - component: {fileID: 9195975143827662955}
   m_Layer: 0
   m_Name: MeleeEnemy
   m_TagString: Untagged
@@ -1966,6 +1966,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   shouldDespawn: 1
+  canRespawn: 1
+  deathCooldown: 60
+  aggroDuration: 60
 --- !u!195 &1275519856075714900
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2011,6 +2014,19 @@ CapsuleCollider:
   m_Height: 1.882848
   m_Direction: 1
   m_Center: {x: 0, y: 0.98, z: 0}
+--- !u!114 &9195975143827662955
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6769484184387676296}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a4e04c83fb2e2546ac9f1ce8ccd7566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 1
 --- !u!1 &6825425953349683220
 GameObject:
   m_ObjectHideFlags: 0

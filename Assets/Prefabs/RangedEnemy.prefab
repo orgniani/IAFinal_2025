@@ -555,6 +555,7 @@ GameObject:
   - component: {fileID: 6393893837332156067}
   - component: {fileID: 3625869282353706221}
   - component: {fileID: 1792918372775374336}
+  - component: {fileID: 3781151791155192370}
   m_Layer: 0
   m_Name: RangedEnemy
   m_TagString: Untagged
@@ -616,6 +617,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 3
   shouldDespawn: 1
+  canRespawn: 1
+  deathCooldown: 60
+  aggroDuration: 60
 --- !u!195 &3625869282353706221
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -661,6 +665,19 @@ CapsuleCollider:
   m_Height: 1.8772755
   m_Direction: 1
   m_Center: {x: 0, y: 0.99, z: 0}
+--- !u!114 &3781151791155192370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974727768335251060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a4e04c83fb2e2546ac9f1ce8ccd7566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
 --- !u!1 &1999725300938151366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2676,8 +2693,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1aef6605e1d9dbd42989be52913d3c89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  directHealthController: {fileID: 6393893837332156067}
-  healthControllerSource: {fileID: 0}
+  healthController: {fileID: 6393893837332156067}
   healthBar: {fileID: 4163208945146105844}
 --- !u!114 &1790407490076587086
 MonoBehaviour:
