@@ -482,7 +482,7 @@ MonoBehaviour:
   animationParameters: {fileID: 11400000, guid: 538d865579b392741a3bcf1b81eb1e15, type: 2}
   settings: {fileID: 11400000, guid: 633016fff47f0c345b139bbf80ed0561, type: 2}
   wanderSpeed: 1
-  searchRadius: 10
+  searchRadius: 20
   circleRadius: 3
   circlePrecision: 16
 --- !u!1102 &7153980310696979099

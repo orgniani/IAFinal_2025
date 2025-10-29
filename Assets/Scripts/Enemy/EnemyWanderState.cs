@@ -19,10 +19,9 @@ namespace Enemy
         [SerializeField, Range(4, 64)] private int circlePrecision = 16;
 
         private NavMeshAgent _agent;
-
         private Transform _target;
         private IDamageable _damageableTarget;
-
+        private HealthController _selfHealth;
         private Vector3 _origin;
         private float _angle;
 
@@ -30,6 +29,7 @@ namespace Enemy
         {
             float radians = _angle * Mathf.Deg2Rad;
             Vector3 offset = new Vector3(Mathf.Cos(radians), 0f, Mathf.Sin(radians)) * circleRadius;
+
             _angle = (_angle + 360f / circlePrecision) % 360f;
             return _origin + offset;
         }
@@ -47,6 +47,10 @@ namespace Enemy
             ValidateReferences();
 
             _agent = animator.GetComponent<NavMeshAgent>();
+            _selfHealth = animator.GetComponent<HealthController>();
+
+            if (_selfHealth != null)
+                _selfHealth.OnHit += HandleHit;
 
             var player = FindAnyObjectByType<PlayerController>();
             if (player)
@@ -67,6 +71,23 @@ namespace Enemy
 
             if (_damageableTarget != null && _damageableTarget.IsAlive && IsPlayerInRange())
                 animator.SetBool(animationParameters.isPlayerDetectedBool, true);
+        }
+
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            if (_selfHealth != null)
+                _selfHealth.OnHit -= HandleHit;
+        }
+
+        private void HandleHit()
+        {
+            if (_agent != null && _agent.isActiveAndEnabled)
+            {
+                Animator animator = _agent.GetComponent<Animator>();
+
+                if (animator != null)
+                    animator.SetBool(animationParameters.isPlayerDetectedBool, true);
+            }
         }
 
         private void ValidateReferences()
