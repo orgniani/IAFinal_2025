@@ -18,7 +18,10 @@ namespace Enemy
 
         private NavMeshAgent _agent;
         private Transform _target;
+
         private IDamageable _damageableTarget;
+        private IDamageable _selfDamageable;
+
         private float _timer;
 
         private bool IsOutOfRange()
@@ -36,6 +39,8 @@ namespace Enemy
             ValidateReferences();
 
             _agent = animator.GetComponent<NavMeshAgent>();
+            _selfDamageable = animator.GetComponent<IDamageable>();
+
             var player = FindAnyObjectByType<PlayerController>();
             if (player)
             {
@@ -66,8 +71,18 @@ namespace Enemy
             }
 
             if (IsInAttackRange())
+            {
+                if (_selfDamageable != null)
+                    _selfDamageable.ClearAggroLock();
+
                 animator.SetBool(animationParameters.isPlayerInRangeBool, true);
-            else if (IsOutOfRange())
+                return;
+            }
+
+            if (_selfDamageable != null && _selfDamageable.AggroLocked)
+                return;
+
+            if (IsOutOfRange())
                 animator.SetBool(animationParameters.isPlayerDetectedBool, false);
         }
 

@@ -17,7 +17,7 @@ AnimatorStateMachine:
     m_Position: {x: 30, y: 400, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -2544983598363570995}
-    m_Position: {x: 320, y: 390, z: 0}
+    m_Position: {x: 320, y: 400, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7153980310696979099}
     m_Position: {x: 320, y: 250, z: 0}
@@ -414,9 +414,9 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: 633016fff47f0c345b139bbf80ed0561, type: 2}
   attackCooldown: 2
   escapeRange: 4
-  bulletPrefab: {fileID: 7102261425330031319, guid: 2bfcb7845a82ade4c83516896d4186f3, type: 3}
-  minPoolSize: 5
-  maxPoolSize: 30
+  bulletPrefab: {fileID: 2997589166512543401, guid: 2bfcb7845a82ade4c83516896d4186f3, type: 3}
+  minPoolSize: 3
+  maxPoolSize: 10
 --- !u!1101 &4919796853025742768
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -482,7 +482,7 @@ MonoBehaviour:
   animationParameters: {fileID: 11400000, guid: 538d865579b392741a3bcf1b81eb1e15, type: 2}
   settings: {fileID: 11400000, guid: 633016fff47f0c345b139bbf80ed0561, type: 2}
   wanderSpeed: 1
-  searchRadius: 10
+  searchRadius: 20
   circleRadius: 3
   circlePrecision: 16
 --- !u!1102 &7153980310696979099

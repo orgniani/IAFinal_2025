@@ -1,7 +1,9 @@
 {
     "name": "Orgniani.Damage",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:033d0a626349f3041ac19a1a57304f73"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

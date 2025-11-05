@@ -6,5 +6,10 @@ namespace Damage
     {
         void ApplyDamage(float amount);
         bool IsAlive { get; }
+
+
+        // Optional combat behaviors
+        bool AggroLocked { get; }
+        void ClearAggroLock();
     }
 }

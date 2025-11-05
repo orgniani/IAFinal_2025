@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Helpers;
 using Player;
+using Helpers;
+using VFX;
 
 namespace Input
 {
@@ -12,13 +13,22 @@ namespace Input
 
         [Header("References")]
         [SerializeField] private PlayerController player;
+        [SerializeField] private TargetManager targetManager;
+        [SerializeField] private ClickIndicatorController clickIndicatorController;
+
+        [Header("Settings")]
+        [SerializeField] private LayerMask groundMask;
+        [SerializeField] private float rayDistance = 100f;
 
         private InputAction _moveAction;
+        private InputAction _lookAction;
         private InputAction _attackAction;
+        private Camera _mainCamera;
 
         private void Awake()
         {
             ValidateReferences();
+            _mainCamera = Camera.main;
         }
 
         private void OnEnable()
@@ -26,8 +36,15 @@ namespace Input
             _moveAction = inputActions.FindAction("Move");
             if (_moveAction != null)
             {
-                _moveAction.performed += HandleMovementInput;
-                _moveAction.canceled += HandleMovementInput;
+                _moveAction.started += HandleMoveInput;
+                _moveAction.canceled += HandleMoveInput;
+            }
+
+            _lookAction = inputActions.FindAction("Look");
+            if (_lookAction != null)
+            {
+                _lookAction.performed += HandleLookInput;
+                _lookAction.canceled += HandleLookInput;
             }
 
             _attackAction = inputActions.FindAction("Attack");
@@ -42,8 +59,14 @@ namespace Input
         {
             if (_moveAction != null)
             {
-                _moveAction.performed -= HandleMovementInput;
-                _moveAction.canceled -= HandleMovementInput;
+                _moveAction.started -= HandleMoveInput;
+                _moveAction.canceled -= HandleMoveInput;
+            }
+
+            if (_lookAction != null)
+            {
+                _lookAction.performed -= HandleLookInput;
+                _lookAction.canceled -= HandleLookInput;
             }
 
             if (_attackAction != null)
@@ -53,16 +76,97 @@ namespace Input
             }
         }
 
-        private void HandleMovementInput(InputAction.CallbackContext ctx)
+        private void HandleMoveInput(InputAction.CallbackContext ctx)
         {
-            Vector2 movementInput = ctx.ReadValue<Vector2>();
-            player.SetMoveInput(movementInput);
+            Vector2 screenPos = Mouse.current.position.ReadValue();
+
+            if (TryGetMouseWorldPosition(screenPos, out Vector3 worldPos))
+            {
+                player.MoveToClickPoint(worldPos);
+                clickIndicatorController?.SpawnIndicator(worldPos);
+            }
+        }
+
+
+        private bool TryGetMouseWorldPosition(Vector2 screenPos, out Vector3 worldPos)
+        {
+            worldPos = Vector3.zero;
+
+            if (!ValidateCamera())
+                return false;
+
+            screenPos.x = Mathf.Clamp(screenPos.x, 0, Screen.width - 1);
+            screenPos.y = Mathf.Clamp(screenPos.y, 0, Screen.height - 1);
+
+            Ray ray = _mainCamera.ScreenPointToRay(screenPos);
+            RaycastHit[] hits = Physics.RaycastAll(ray, rayDistance);
+            if (hits.Length == 0)
+                return false;
+
+            System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+
+            foreach (var hit in hits)
+            {
+                int layer = hit.collider.gameObject.layer;
+                bool isGround = (groundMask & (1 << layer)) != 0;
+
+                if (isGround)
+                {
+                    worldPos = hit.point;
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        private void HandleLookInput(InputAction.CallbackContext ctx)
+        {
+            Vector2 screenPos = Mouse.current.position.ReadValue();
+
+            if (!ValidateCamera())
+                return;
+
+            Ray ray = _mainCamera.ScreenPointToRay(screenPos);
+            Plane groundPlane = new Plane(Vector3.up, Vector3.zero);
+
+            if (groundPlane.Raycast(ray, out float enter))
+            {
+                Vector3 worldPos = ray.GetPoint(enter);
+                player.RotateTowards(worldPos);
+            }
+
+            if (Physics.Raycast(ray, out RaycastHit hit, rayDistance))
+                targetManager?.UpdateHoverTarget(hit.collider.gameObject);
+            else
+                targetManager?.UpdateHoverTarget(null);
+        }
+
+        private bool ValidateCamera()
+        {
+            if (_mainCamera == null)
+            {
+                Debug.LogError("[InputReader] Camera.main is NULL. Cannot raycast.");
+                return false;
+            }
+            return true;
         }
 
         private void HandleShootInput(InputAction.CallbackContext ctx)
         {
             bool shooting = ctx.phase != InputActionPhase.Canceled;
-            player.SetShootInput(shooting);
+
+            GameObject target = targetManager ? targetManager.CurrentTarget : null;
+
+            if (target != null)
+            {
+                player.Shoot(shooting, target.transform);
+                return;
+            }
+
+            player.Shoot(shooting, null);
         }
 
         private void ValidateReferences()

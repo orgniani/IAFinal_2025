@@ -1,68 +1,87 @@
 using Damage;
 using UnityEngine;
+using UnityEngine.AI;
 using System;
+using DataSource;
 
 namespace Player
 {
-    [RequireComponent(typeof(CharacterController))]
-    [RequireComponent(typeof(Health))]
+    [RequireComponent(typeof(NavMeshAgent))]
+    [RequireComponent(typeof(HealthController))]
     public class PlayerController : MonoBehaviour
     {
+        [Header("Data Sourcer")]
+        [SerializeField] private HealthControllerSource healthControllerSource;
+
         [Header("Movement Settings")]
-        [SerializeField] private float moveSpeed = 5f;
+        [SerializeField] private float moveSpeed = 6f;
+        [SerializeField] private float rotationSpeed = 720f;
 
-        private CharacterController _controller;
-        private Camera _mainCamera;
-        private Vector2 _moveInput;
+        private NavMeshAgent _agent;
+        private HealthController _health;
 
-        private Health _health;
-
-        public event Action<bool> OnShoot;
-        public CharacterController Controller => _controller;
+        public event Action<bool, Transform> OnShoot;
 
         private void Awake()
         {
-            _controller = GetComponent<CharacterController>();
-            _mainCamera = Camera.main;
-            _health = GetComponent<Health>();
+            _agent = GetComponent<NavMeshAgent>();
+            _health = GetComponent<HealthController>();
+
+            _agent.speed = moveSpeed;
+            _agent.updateRotation = false;
         }
 
-        private void Update()
+        private void OnEnable()
+        {
+            if (!healthControllerSource.DataInstance)
+                healthControllerSource.DataInstance = _health;
+        }
+
+        private void OnDisable()
+        {
+            if (healthControllerSource.DataInstance == _health)
+                healthControllerSource.DataInstance = null;
+        }
+
+        public void MoveToClickPoint(Vector3 worldPoint)
         {
             if (!_health.IsAlive)
                 return;
 
-            HandleMovement();
-            HandleRotation();
-        }
-
-        public void SetMoveInput(Vector2 input) => _moveInput = input;
-
-        public void SetShootInput(bool shooting)
-        {
-            if (!_health.IsAlive)
-                return;
-
-            OnShoot?.Invoke(shooting);
-        }
-
-        private void HandleMovement()
-        {
-            Vector3 input = new Vector3(_moveInput.x, 0f, _moveInput.y).normalized;
-            _controller.SimpleMove(input * moveSpeed);
-        }
-
-        private void HandleRotation()
-        {
-            Ray ray = _mainCamera.ScreenPointToRay(Input.mousePosition);
-            if (Physics.Raycast(ray, out RaycastHit hit))
+            if (!_agent.isOnNavMesh)
             {
-                Vector3 lookDir = hit.point - transform.position;
-                lookDir.y = 0f;
-
-                if (lookDir.sqrMagnitude > 0.01f)
-                    transform.rotation = Quaternion.LookRotation(lookDir);
+                Debug.LogWarning($"[PlayerController] Agent is not on NavMesh at {transform.position}");
+                return;
             }
+
+            _agent.SetDestination(worldPoint);
+        }
+
+        public void Shoot(bool shooting, Transform target)
+        {
+            if (!_health.IsAlive)
+                return;
+
+            OnShoot?.Invoke(shooting, target);
+        }
+
+        public void RotateTowards(Vector3 worldPos)
+        {
+            if (!_health.IsAlive)
+                return;
+
+            Vector3 direction = worldPos - transform.position;
+            direction.y = 0f;
+
+            if (direction.sqrMagnitude < 0.001f)
+                return;
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.RotateTowards(
+                transform.rotation,
+                targetRotation,
+                rotationSpeed * Time.deltaTime
+            );
         }
     }
 }

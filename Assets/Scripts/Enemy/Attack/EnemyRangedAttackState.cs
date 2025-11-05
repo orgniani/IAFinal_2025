@@ -11,20 +11,20 @@ namespace Enemy
     {
         [Header("Ranged Attack Settings")]
         [SerializeField, Range(0f, 20f)] private float escapeRange = 3f;
-        [SerializeField] private GameObject bulletPrefab;
+        [SerializeField] private Bullet bulletPrefab;
 
         [Header("Pooling Settings")]
         [SerializeField] private int minPoolSize = 5;
         [SerializeField] private int maxPoolSize = 30;
 
-        private List<GameObject> _bulletPool;
+        private List<Bullet> _bullets;
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             base.OnStateEnter(animator, stateInfo, layerIndex);
             ReferenceValidator.Validate(bulletPrefab, nameof(bulletPrefab), this);
 
-            if (_bulletPool == null)
+            if (_bullets == null)
                 InitializePool(minPoolSize);
 
             _agent.isStopped = false;
@@ -55,40 +55,43 @@ namespace Enemy
             base.OnStateUpdate(animator, stateInfo, layerIndex);
         }
 
-
         protected override void PerformAttack()
         {
-            GameObject bullet = GetPooledBullet();
+            Bullet bullet = GetPooledBullet();
             if (bullet == null) return;
 
             bullet.transform.position = _agent.transform.position + _agent.transform.forward;
             bullet.transform.rotation = Quaternion.LookRotation(_target.position - _agent.transform.position);
-            bullet.SetActive(true);
+            bullet.gameObject.SetActive(true);
+
+            Vector3 direction = (_target.position - _agent.transform.position).normalized;
+            bullet.SetDirection(direction);
         }
 
         private void InitializePool(int size)
         {
-            _bulletPool = new List<GameObject>();
+            _bullets = new List<Bullet>();
             for (int i = 0; i < size; i++)
                 AddBulletToPool();
         }
 
-        private GameObject AddBulletToPool()
+        private Bullet AddBulletToPool()
         {
-            if (_bulletPool.Count >= maxPoolSize)
+            if (_bullets.Count >= maxPoolSize)
                 return null;
 
-            GameObject bullet = GameObject.Instantiate(bulletPrefab);
-            bullet.SetActive(false);
-            _bulletPool.Add(bullet);
+            Bullet bullet = Instantiate(bulletPrefab, _agent.transform);
+            bullet.gameObject.SetActive(false);
+
+            _bullets.Add(bullet);
             return bullet;
         }
 
-        private GameObject GetPooledBullet()
+        private Bullet GetPooledBullet()
         {
-            foreach (var bullet in _bulletPool)
+            foreach (var bullet in _bullets)
             {
-                if (!bullet.activeInHierarchy)
+                if (!bullet.gameObject.activeInHierarchy)
                     return bullet;
             }
             return AddBulletToPool();

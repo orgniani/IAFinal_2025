@@ -4,12 +4,13 @@ namespace Damage
 {
     public class Bullet : MonoBehaviour
     {
+        [Header("Settings")]
         [SerializeField] private float speed = 20f;
         [SerializeField] private float lifetime = 2f;
         [SerializeField] private float damage = 1f;
-        [SerializeField] private float downOffset = 0.05f;
 
         private float _lifeTimer;
+        private Vector3 _direction;
 
         private void OnEnable()
         {
@@ -18,13 +19,16 @@ namespace Damage
 
         private void Update()
         {
-            Vector3 direction = Vector3.forward + Vector3.down * downOffset;
-            transform.Translate(direction.normalized * speed * Time.deltaTime, Space.Self);
+            transform.Translate(_direction * speed * Time.deltaTime, Space.World);
 
             _lifeTimer -= Time.deltaTime;
-
             if (_lifeTimer <= 0f)
                 gameObject.SetActive(false);
+        }
+
+        public void SetDirection(Vector3 direction)
+        {
+            _direction = direction.normalized;
         }
 
         private void OnTriggerEnter(Collider other)

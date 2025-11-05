@@ -1,0 +1,24 @@
+{
+    "name": "Orgniani.UI",
+    "rootNamespace": "",
+    "references": [
+        "GUID:af07de07a6098504880baa8dc0dba3ab",
+        "GUID:d1928410ac7be25438ba9ecf058888f7",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:acbce4baf7b574544b407b16ff1327ce",
+        "GUID:033d0a626349f3041ac19a1a57304f73",
+        "GUID:16146f20c281df2498ebda84ac6cb7be",
+        "GUID:b4c8bc60e5a5ec548a4ef93d15fa8bd1",
+        "GUID:90e51fbed2011724f9cd8523eff7c2d0",
+        "GUID:c9589a1eeffa3ac4cabf7da765c5b679"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
