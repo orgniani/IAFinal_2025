@@ -17,3 +17,5 @@ MonoBehaviour:
     points: 10
   - enemyType: 2
     points: 20
+  - enemyType: 3
+    points: 15

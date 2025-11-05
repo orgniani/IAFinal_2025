@@ -5,5 +5,6 @@ namespace Enemy
         None,
         Melee,
         Ranged,
+        Hopper
     }
 }
