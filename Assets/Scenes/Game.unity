@@ -896,7 +896,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd4fa896843500442a22240ae3dd082b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 5
+  maxHealth: 1000
   shouldDespawn: 1
   canRespawn: 0
   deathCooldown: 3
@@ -1008,30 +1008,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpHeight: 1.5
-  jumpCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 2
-      outSlope: 2
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    - serializedVersion: 3
-      time: 1
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0
-      outWeight: 0
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
+  jumpDuration: 0.5
 --- !u!1 &648393823
 GameObject:
   m_ObjectHideFlags: 0
@@ -1240,6 +1217,10 @@ PrefabInstance:
     - target: {fileID: 6769484184387676296, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
       propertyPath: m_Name
       value: HopperEnemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6769484184387676296, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7832068196621903025, guid: 91fab64bd444b0c4bb26090b4ac5c23f, type: 3}
       propertyPath: m_Controller

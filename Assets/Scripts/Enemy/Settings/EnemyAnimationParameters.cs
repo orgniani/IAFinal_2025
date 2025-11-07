@@ -10,6 +10,7 @@ namespace Enemy
         public string isPlayerInRangeBool = "PlayerInRange";
         public string isPlayerTooCloseBool = "PlayerTooClose";
         public string playerDiedTrigger = "PlayerDied";
+        public string isJumpingBool = "IsJumping";
     }
 
 }

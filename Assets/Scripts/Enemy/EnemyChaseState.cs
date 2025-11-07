@@ -63,6 +63,12 @@ namespace Enemy
                 return;
             }
 
+            if (_agent.isOnOffMeshLink)
+            {
+                animator.SetBool(animationParameters.isJumpingBool, true);
+                return;
+            }
+
             _timer += Time.deltaTime;
             if (_timer >= settings.UpdateInterval)
             {
