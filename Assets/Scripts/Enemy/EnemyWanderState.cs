@@ -66,12 +66,24 @@ namespace Enemy
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
+            if (_agent == null)
+                return;
+
             if (_agent.remainingDistance <= _agent.stoppingDistance)
                 _agent.SetDestination(GetNextDestination());
 
-            if (_damageableTarget != null && _damageableTarget.IsAlive && IsPlayerInRange())
+            if (_damageableTarget == null || !_damageableTarget.IsAlive || _target == null)
+            {
+                animator.SetBool(animationParameters.isPlayerDetectedBool, false);
+                return;
+            }
+
+            if (IsPlayerInRange())
                 animator.SetBool(animationParameters.isPlayerDetectedBool, true);
+            else
+                animator.SetBool(animationParameters.isPlayerDetectedBool, false);
         }
+
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {

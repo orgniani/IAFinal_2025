@@ -898,8 +898,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dd4fa896843500442a22240ae3dd082b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 1000
-  shouldDespawn: 1
+  maxHealth: 10
+  shouldDespawn: 0
   canRespawn: 0
   deathCooldown: 3
   aggroDuration: 60
