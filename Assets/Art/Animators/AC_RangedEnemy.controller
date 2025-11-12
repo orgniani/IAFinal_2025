@@ -412,11 +412,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationParameters: {fileID: 11400000, guid: 538d865579b392741a3bcf1b81eb1e15, type: 2}
   settings: {fileID: 11400000, guid: 633016fff47f0c345b139bbf80ed0561, type: 2}
-  attackCooldown: 2
+  attackCooldown: 1
   escapeRange: 4
   bulletPrefab: {fileID: 2997589166512543401, guid: 2bfcb7845a82ade4c83516896d4186f3, type: 3}
   minPoolSize: 3
   maxPoolSize: 10
+  bulletDelay: 0.4
 --- !u!1101 &4919796853025742768
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

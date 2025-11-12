@@ -27,7 +27,6 @@ namespace Enemy
             return DistanceHelper.IsBeyondRange(_agent.transform.position, _target.position, settings.AttackRange);
         }
 
-
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             ValidateReferences();

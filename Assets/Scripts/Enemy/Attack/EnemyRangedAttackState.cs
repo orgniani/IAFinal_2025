@@ -17,7 +17,12 @@ namespace Enemy
         [SerializeField] private int minPoolSize = 5;
         [SerializeField] private int maxPoolSize = 30;
 
+        [Header("Timing")]
+        [SerializeField] private float bulletDelay = 0.2f;
+
         private List<Bullet> _bullets;
+        private float _bulletDelayTimer;
+        private bool _waitingToFire;
 
         public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
@@ -28,6 +33,8 @@ namespace Enemy
                 InitializePool(minPoolSize);
 
             _agent.isStopped = false;
+            _waitingToFire = false;
+            _bulletDelayTimer = 0f;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -52,13 +59,30 @@ namespace Enemy
             }
 
             _agent.ResetPath();
+
+            if (_waitingToFire)
+            {
+                _bulletDelayTimer -= Time.deltaTime;
+                if (_bulletDelayTimer <= 0f)
+                {
+                    _waitingToFire = false;
+                    FireBullet();
+                }
+            }
+
             base.OnStateUpdate(animator, stateInfo, layerIndex);
         }
 
         protected override void PerformAttack()
         {
+            _waitingToFire = true;
+            _bulletDelayTimer = bulletDelay;
+        }
+
+        private void FireBullet()
+        {
             Bullet bullet = GetPooledBullet();
-            if (bullet == null) return;
+            if (bullet == null || _target == null) return;
 
             bullet.transform.position = _agent.transform.position + _agent.transform.forward;
             bullet.transform.rotation = Quaternion.LookRotation(_target.position - _agent.transform.position);
@@ -80,9 +104,8 @@ namespace Enemy
             if (_bullets.Count >= maxPoolSize)
                 return null;
 
-            Bullet bullet = Instantiate(bulletPrefab, _agent.transform);
+            Bullet bullet = Object.Instantiate(bulletPrefab, _agent.transform);
             bullet.gameObject.SetActive(false);
-
             _bullets.Add(bullet);
             return bullet;
         }
