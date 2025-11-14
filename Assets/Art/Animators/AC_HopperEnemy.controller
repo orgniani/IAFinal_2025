@@ -503,6 +503,7 @@ MonoBehaviour:
   settings: {fileID: 11400000, guid: bb53df5d6bbaf4c47a32f0c1ff5853c3, type: 2}
   chaseSpeed: 8
   loseRange: 30
+  canJump: 1
   animationParameters: {fileID: 11400000, guid: 538d865579b392741a3bcf1b81eb1e15, type: 2}
 --- !u!114 &7721413197304666262
 MonoBehaviour:
@@ -519,4 +520,5 @@ MonoBehaviour:
   settings: {fileID: 0}
   chaseSpeed: 5
   loseRange: 15
+  canJump: 0
   animationParameters: {fileID: 0}

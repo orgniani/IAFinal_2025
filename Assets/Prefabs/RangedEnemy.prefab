@@ -552,10 +552,12 @@ GameObject:
   m_Component:
   - component: {fileID: 8751784866239417579}
   - component: {fileID: 2320889193148853576}
+  - component: {fileID: 4462627967455404360}
   - component: {fileID: 6393893837332156067}
+  - component: {fileID: 3781151791155192370}
   - component: {fileID: 3625869282353706221}
   - component: {fileID: 1792918372775374336}
-  - component: {fileID: 3781151791155192370}
+  - component: {fileID: 7440050394079332394}
   m_Layer: 0
   m_Name: RangedEnemy
   m_TagString: Untagged
@@ -603,6 +605,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4462627967455404360
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974727768335251060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68fb77a71831030479fd93473d05fa63, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &6393893837332156067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -619,7 +633,20 @@ MonoBehaviour:
   shouldDespawn: 1
   canRespawn: 1
   deathCooldown: 60
-  aggroDuration: 60
+  aggroDuration: 15
+--- !u!114 &3781151791155192370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1974727768335251060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a4e04c83fb2e2546ac9f1ce8ccd7566, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  type: 2
 --- !u!195 &3625869282353706221
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -640,7 +667,7 @@ NavMeshAgent:
   m_AutoRepath: 1
   m_Height: 2
   m_BaseOffset: 0
-  m_WalkableMask: 4294967295
+  m_WalkableMask: 27
   m_ObstacleAvoidanceType: 4
 --- !u!136 &1792918372775374336
 CapsuleCollider:
@@ -665,19 +692,33 @@ CapsuleCollider:
   m_Height: 1.8772755
   m_Direction: 1
   m_Center: {x: 0, y: 0.99, z: 0}
---- !u!114 &3781151791155192370
-MonoBehaviour:
+--- !u!54 &7440050394079332394
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1974727768335251060}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a4e04c83fb2e2546ac9f1ce8ccd7566, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  type: 2
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &1999725300938151366
 GameObject:
   m_ObjectHideFlags: 0
@@ -2195,7 +2236,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7499221005007398592}
   - component: {fileID: 1036994376282395466}
-  - component: {fileID: 2421882467780933945}
+  - component: {fileID: 1180057062153518634}
   m_Layer: 6
   m_Name: WizardBody
   m_TagString: Untagged
@@ -2340,7 +2381,7 @@ SkinnedMeshRenderer:
     m_Center: {x: 0.0000038146973, y: 9.283916, z: 89.01546}
     m_Extent: {x: 116.46152, y: 48.080334, z: 112.55812}
   m_DirtyAABB: 0
---- !u!136 &2421882467780933945
+--- !u!136 &1180057062153518634
 CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -2359,10 +2400,10 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.7
-  m_Height: 1.8772755
+  m_Radius: 1.1646155
+  m_Height: 2.2511625
   m_Direction: 1
-  m_Center: {x: 0, y: 0.99, z: 0}
+  m_Center: {x: 0.00000003140284, y: 0.89015466, z: -0.092839286}
 --- !u!1 &7114982315673418393
 GameObject:
   m_ObjectHideFlags: 0

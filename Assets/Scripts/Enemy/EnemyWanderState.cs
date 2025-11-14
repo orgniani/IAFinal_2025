@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using Player;
 using Damage;
 using Helpers;
+using Speed;
 
 namespace Enemy
 {
@@ -19,17 +20,21 @@ namespace Enemy
         [SerializeField, Range(4, 64)] private int circlePrecision = 16;
 
         private NavMeshAgent _agent;
+        private SpeedModifier _speedMod;
+
         private Transform _target;
         private IDamageable _damageableTarget;
+
         private HealthController _selfHealth;
+
         private Vector3 _origin;
         private float _angle;
+        private bool _forceAgroFromHit = false;
 
         private Vector3 GetNextDestination()
         {
             float radians = _angle * Mathf.Deg2Rad;
             Vector3 offset = new Vector3(Mathf.Cos(radians), 0f, Mathf.Sin(radians)) * circleRadius;
-
             _angle = (_angle + 360f / circlePrecision) % 360f;
             return _origin + offset;
         }
@@ -47,6 +52,7 @@ namespace Enemy
             ValidateReferences();
 
             _agent = animator.GetComponent<NavMeshAgent>();
+            _speedMod = animator.GetComponent<SpeedModifier>();
             _selfHealth = animator.GetComponent<HealthController>();
 
             if (_selfHealth != null)
@@ -60,8 +66,10 @@ namespace Enemy
             }
 
             _origin = _agent.transform.position;
-            _agent.speed = wanderSpeed;
+            _speedMod.SetSpeed(wanderSpeed);
             _agent.SetDestination(GetNextDestination());
+
+            _forceAgroFromHit = false;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -78,12 +86,14 @@ namespace Enemy
                 return;
             }
 
-            if (IsPlayerInRange())
+            if (_forceAgroFromHit)
+            {
                 animator.SetBool(animationParameters.isPlayerDetectedBool, true);
-            else
-                animator.SetBool(animationParameters.isPlayerDetectedBool, false);
-        }
+                return;
+            }
 
+            animator.SetBool(animationParameters.isPlayerDetectedBool, IsPlayerInRange());
+        }
 
         public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
@@ -93,13 +103,7 @@ namespace Enemy
 
         private void HandleHit()
         {
-            if (_agent != null && _agent.isActiveAndEnabled)
-            {
-                Animator animator = _agent.GetComponent<Animator>();
-
-                if (animator != null)
-                    animator.SetBool(animationParameters.isPlayerDetectedBool, true);
-            }
+            _forceAgroFromHit = true;
         }
 
         private void ValidateReferences()

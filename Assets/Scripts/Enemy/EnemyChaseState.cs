@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using Damage;
 using Player;
 using Helpers;
+using Speed;
 
 namespace Enemy
 {
@@ -12,11 +13,13 @@ namespace Enemy
         [SerializeField] private EnemyGeneralSettings settings;
         [SerializeField, Range(0f, 20f)] private float chaseSpeed = 5f;
         [SerializeField, Range(0f, 30f)] private float loseRange = 15f;
+        [SerializeField] private bool canJump = false;
 
         [Header("Parameters")]
         [SerializeField] private EnemyAnimationParameters animationParameters;
 
         private NavMeshAgent _agent;
+        private SpeedModifier _speedMod;
         private Transform _target;
 
         private IDamageable _damageableTarget;
@@ -39,6 +42,7 @@ namespace Enemy
             ValidateReferences();
 
             _agent = animator.GetComponent<NavMeshAgent>();
+            _speedMod = animator.GetComponent<SpeedModifier>();
             _selfDamageable = animator.GetComponent<IDamageable>();
 
             var player = FindAnyObjectByType<PlayerController>();
@@ -48,14 +52,17 @@ namespace Enemy
                 _damageableTarget = player.GetComponent<IDamageable>();
             }
 
-            _agent.speed = chaseSpeed;
+            _speedMod.SetSpeed(chaseSpeed);
             _timer = 0f;
         }
 
         public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (_target == null || _damageableTarget == null)
+            {
+                Debug.LogWarning("[EnemyChaseState] Target or DamageableTarget is null, aborting update.");
                 return;
+            }
 
             if (!_damageableTarget.IsAlive)
             {
@@ -63,7 +70,7 @@ namespace Enemy
                 return;
             }
 
-            if (_agent.isOnOffMeshLink)
+            if (_agent.isOnOffMeshLink && canJump)
             {
                 animator.SetBool(animationParameters.isJumpingBool, true);
                 return;
@@ -85,11 +92,21 @@ namespace Enemy
                 return;
             }
 
-            if (_selfDamageable != null && _selfDamageable.AggroLocked)
-                return;
+            if (_selfDamageable != null && _selfDamageable.AggroLocked) return;
 
             if (IsOutOfRange())
                 animator.SetBool(animationParameters.isPlayerDetectedBool, false);
+        }
+
+        public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
+        {
+            bool playerDetected = animator.GetBool(animationParameters.isPlayerDetectedBool);
+            bool playerInRange = animator.GetBool(animationParameters.isPlayerInRangeBool);
+            bool isJumping = animator.GetBool(animationParameters.isJumpingBool);
+
+            Debug.Log($"[EnemyChaseState] EXIT triggered! " +
+                      $"AggroLock={_selfDamageable?.AggroLocked}, " +
+                      $"Detected={playerDetected}, InRange={playerInRange}, Jumping={isJumping}");
         }
 
         private void ValidateReferences()

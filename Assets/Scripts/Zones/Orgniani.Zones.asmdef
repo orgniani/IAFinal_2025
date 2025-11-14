@@ -1,3 +1,16 @@
 {
-	"name": "Orgniani.Zones"
+    "name": "Orgniani.Zones",
+    "rootNamespace": "",
+    "references": [
+        "GUID:cc7ab22e98d3eea4a899413604619d76"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }

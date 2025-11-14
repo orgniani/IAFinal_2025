@@ -2,10 +2,11 @@
     "name": "Orgniani.Player",
     "rootNamespace": "",
     "references": [
+        "GUID:8c4dd21966739024fbd72155091d199e",
         "GUID:acbce4baf7b574544b407b16ff1327ce",
         "GUID:d1928410ac7be25438ba9ecf058888f7",
         "GUID:033d0a626349f3041ac19a1a57304f73",
-        "GUID:8c4dd21966739024fbd72155091d199e"
+        "GUID:cc7ab22e98d3eea4a899413604619d76"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

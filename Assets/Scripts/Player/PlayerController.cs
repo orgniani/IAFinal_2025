@@ -2,15 +2,16 @@ using Damage;
 using UnityEngine;
 using UnityEngine.AI;
 using System;
-using DataSource;
+using Speed;
 
 namespace Player
 {
     [RequireComponent(typeof(NavMeshAgent))]
     [RequireComponent(typeof(HealthController))]
+    [RequireComponent(typeof(SpeedModifier))]
     public class PlayerController : MonoBehaviour
     {
-        [Header("Data Sourcer")]
+        [Header("Data Source")]
         [SerializeField] private HealthControllerSource healthControllerSource;
 
         [Header("Movement Settings")]
@@ -19,6 +20,7 @@ namespace Player
 
         private NavMeshAgent _agent;
         private HealthController _health;
+        private SpeedModifier _speedMod;
 
         public event Action<bool, Transform> OnShoot;
 
@@ -26,9 +28,7 @@ namespace Player
         {
             _agent = GetComponent<NavMeshAgent>();
             _health = GetComponent<HealthController>();
-
-            _agent.speed = moveSpeed;
-            _agent.updateRotation = false;
+            _speedMod = GetComponent<SpeedModifier>();
         }
 
         private void OnEnable()
@@ -41,6 +41,12 @@ namespace Player
         {
             if (healthControllerSource.DataInstance == _health)
                 healthControllerSource.DataInstance = null;
+        }
+
+        private void Start()
+        {
+            _speedMod.SetSpeed(moveSpeed);
+            _agent.updateRotation = false;
         }
 
         public void MoveToClickPoint(Vector3 worldPoint)

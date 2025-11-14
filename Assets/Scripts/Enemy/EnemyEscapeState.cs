@@ -3,6 +3,7 @@ using UnityEngine.AI;
 using Damage;
 using Player;
 using Helpers;
+using Speed;
 
 namespace Enemy
 {
@@ -17,6 +18,7 @@ namespace Enemy
         [SerializeField, Range(0f, 10f)] private float escapeSpeed = 6f;
 
         private NavMeshAgent _agent;
+        private SpeedModifier _speedMod;
         private Transform _target;
         private IDamageable _damageableTarget;
         private float _timer;
@@ -29,6 +31,8 @@ namespace Enemy
             ValidateReferences();
 
             _agent = animator.GetComponent<NavMeshAgent>();
+            _speedMod = animator.GetComponent<SpeedModifier>();
+
             var player = FindAnyObjectByType<PlayerController>();
             if (player)
             {
@@ -37,7 +41,7 @@ namespace Enemy
             }
 
             _agent.isStopped = false;
-            _agent.speed = escapeSpeed;
+            _speedMod.SetSpeed(escapeSpeed);
 
             _timer = 0f;
             _rangeState = RangeState.InOptimal;
